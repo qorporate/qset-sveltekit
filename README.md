@@ -1,38 +1,52 @@
-# sv
+# QSet
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Manage sets when playing sports. Add as many teams as you'd like. Built with SvelteKit.
 
-## Creating a project
+## Getting Started
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Prerequisites
 
-```bash
-# create a new project in the current directory
-npx sv create
+- [Bun](https://bun.sh/) (version 1.2.0 or higher)
+- A modern web browser
 
-# create a new project in my-app
-npx sv create my-app
-```
+### Installation
 
-## Developing
+1. Clone the repository
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+ ```bash
+ git clone https://github.com/qorporate/qset-sveltekit.git
+ ```
 
-```bash
-npm run dev
+2. Install dependencies
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+ ```bash
+ bun install
+ ```
 
-## Building
+3. Start the development server
 
-To create a production version of your app:
+ ```bash
+  bun run dev --open
+ ```
 
-```bash
-npm run build
-```
+## Deployment
 
-You can preview the production build with `npm run preview`.
+This project is configured for deployment to GitHub Pages using GitHub Actions. The deployment workflow is triggered automatically when changes are pushed to the `master` branch.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+To deploy to your own GitHub Pages:
+
+1. Fork this repository
+2. Enable GitHub Pages in your repository settings
+3. Set the GitHub Pages source to "GitHub Actions"
+4. Push changes to the `master` branch
+
+The deployment workflow can be found here: `.github/workflows/deploy.yml`.
+
+## Development Scripts
+
+- `bun run dev` - Start development server
+- `bun run build` - Build for production
+- `bun run preview` - Preview production build locally
+- `bun run check` - Run type checking
+- `bun run format` - Format code using Prettier
+- `bun run lint` - Run linting checks
