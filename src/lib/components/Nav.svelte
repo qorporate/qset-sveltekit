@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { base } from '$app/paths';
+
 	interface Page {
 		page: 'home' | 'guide' | 'feedback';
 	}
@@ -7,15 +9,15 @@
 </script>
 
 <div class="nav-container">
-	<a class="logo" href="/">QSet</a>
+	<a class="logo" href="{base}/">QSet</a>
 	<div class="nav-links">
 		{#if props.page === 'home'}
-			<a href="/guide" class="nav-link primary">Guide</a>
-			<a href="/feedback" class="nav-link secondary">Feedback</a>
+			<a href="{base}/guide" class="nav-link primary">Guide</a>
+			<a href="{base}/feedback" class="nav-link secondary">Feedback</a>
 		{:else if props.page === 'guide'}
-			<a href="/feedback" class="nav-link secondary">Feedback</a>
+			<a href="{base}/feedback" class="nav-link secondary">Feedback</a>
 		{:else if props.page === 'feedback'}
-			<a href="/guide" class="nav-link primary">Guide</a>
+			<a href="{base}/guide" class="nav-link primary">Guide</a>
 		{/if}
 	</div>
 </div>
