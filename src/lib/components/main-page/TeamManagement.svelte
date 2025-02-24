@@ -15,6 +15,7 @@
 	}
 </script>
 
+<!-- todo: add on enter key behaviour -->
 <div class="team-management">
 	<h2>Team Management</h2>
 	<div class="team-input">
@@ -46,5 +47,12 @@
 		border: 1px solid #ddd;
 		border-radius: 4px;
 		flex-grow: 1;
+	}
+
+	@media (max-width: 450px) {
+		input[type='text'] {
+			/* prevent accessibility zoom in on phones  */
+			font-size: 16px;
+		}
 	}
 </style>

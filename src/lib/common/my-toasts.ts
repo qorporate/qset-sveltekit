@@ -9,3 +9,13 @@ export function showErrorToast(m: string) {
 		}
 	});
 }
+
+export function showSuccessToast(message: string) {
+	return toast.push(message, {
+		theme: {
+			'--toastColor': 'white',
+			'--toastBackground': '#059A1D',
+			'--toastBarHeight': 0
+		}
+	});
+}
