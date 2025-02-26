@@ -1,0 +1,33 @@
+{
+	"name": "QSet",
+	"description": "Manage sets when playing sports. Add as many teams as you'd like.",
+	"display": "standalone",
+	"theme_color": "#ffffff",
+	"background_color": "#f0f0f0",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "icons/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
+			"src": "icons/apple-touch-icon.png",
+			"sizes": "180x180",
+			"type": "image/png"
+		},
+		{
+			"src": "icons/favicon-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		}
+	],
+	"screenshots": [
+		{
+			"src": "screenshots/home.png",
+			"sizes": "480x597",
+			"type": "image/png",
+			"label": "Home page showing teams in the game, and one in the queue."
+		}
+	]
+}
