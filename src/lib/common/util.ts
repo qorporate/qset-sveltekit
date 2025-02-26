@@ -2,20 +2,37 @@ import type { Game, Team } from '$lib/main/classes.svelte';
 import { showErrorToast } from './my-toasts';
 
 export function editTeamName(game: Game, oldTeamName: string): void {
-	const newTeamName = prompt('Enter new team name:', oldTeamName)?.trim().toUpperCase();
+	console.debug('User is trying to edit the team name.');
+	const newTeamName = prompt('Enter new team name:');
 
-	if (!newTeamName || newTeamName === oldTeamName) {
-		const errorMessage = newTeamName
-			? 'The new name is the same as the old name.'
-			: 'Please provide a name.';
-		showErrorToast(errorMessage);
+	// Check if the prompt was cancelled
+	if (newTeamName === null) {
+		console.debug('User cancelled the edit. Alright, maybe next time.');
 		return;
 	}
 
-	const error = game.editTeamName(oldTeamName, newTeamName);
+	// Trim and convert to uppercase
+	const trimmedNewTeamName = newTeamName.trim().toUpperCase();
+
+	// Check if the new name is the same as the old name or if it's empty
+	if (trimmedNewTeamName === oldTeamName.toUpperCase()) {
+		showErrorToast('The new name is the same as the old name.');
+		return;
+	} else if (trimmedNewTeamName === '') {
+		showErrorToast('Please provide a name.');
+		return;
+	}
+
+	// Attempt to edit the team name
+	const error = game.editTeamName(oldTeamName, trimmedNewTeamName);
 	if (error) {
 		showErrorToast(error);
+		return;
 	}
+
+	console.debug(
+		`Team name updated. Old team name: ${oldTeamName}. New team name: ${trimmedNewTeamName}.`
+	);
 }
 
 export function formatTeamStats(team: Team): string {
