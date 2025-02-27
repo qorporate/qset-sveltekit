@@ -10,25 +10,25 @@
 			"src": "icons/logo1024x1024.svg",
 			"sizes": "1024x1024",
 			"type": "image/svg+xml",
-			"purpose": "any maskable"
+			"purpose": "maskable"
 		},
 		{
 			"src": "icons/logo512x512.svg",
 			"sizes": "512x512",
 			"type": "image/svg+xml",
-			"purpose": "any maskable"
+			"purpose": "maskable"
 		},
 		{
-			"src": "icons/logo384x384.png",
+			"src": "icons/logo384x384.svg",
 			"sizes": "384x384",
 			"type": "image/svg+xml",
-			"purpose": "any maskable"
+			"purpose": "maskable"
 		},
 		{
 			"src": "icons/logo192x192.svg",
 			"sizes": "192x192",
 			"type": "image/svg+xml",
-			"purpose": "any maskable"
+			"purpose": "maskable"
 		},
 		{ "src": "icons/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
 		{ "src": "icons/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
@@ -39,6 +39,13 @@
 			"sizes": "480x597",
 			"type": "image/png",
 			"label": "Home page showing teams in the game, and one in the queue."
+		},
+		{
+			"src": "screenshots/wide-home.png",
+			"sizes": "480x597",
+			"type": "image/png",
+			"label": "Home page showing teams in the game, and one in the queue.",
+			"form_factor": "wide"
 		}
 	]
 }

@@ -10,12 +10,14 @@ export function showErrorToast(m: string) {
 	});
 }
 
-export function showSuccessToast(message: string) {
+export function showSuccessToast(message: string, callback?: () => void, duration: number = 3000) {
 	return toast.push(message, {
 		theme: {
 			'--toastColor': 'white',
 			'--toastBackground': '#059A1D',
 			'--toastBarHeight': 0
-		}
+		},
+		duration,
+		onpop: callback ? callback : undefined
 	});
 }

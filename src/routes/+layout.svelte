@@ -15,7 +15,6 @@
 				if (newWorker.state === 'installed') {
 					if (confirm('New update available! Reload to update?')) {
 						newWorker.postMessage({ type: 'SKIP_WAIT' });
-
 						window.location.reload();
 					}
 				}

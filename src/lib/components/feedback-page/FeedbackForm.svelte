@@ -1,10 +1,14 @@
-<script lang="js">
+<script lang="ts">
 	import { browser } from '$app/environment';
 	import { showErrorToast, showSuccessToast } from '$lib/common/my-toasts';
+	import type { Feedback } from '$lib/db/db';
 	import emailjs from '@emailjs/browser';
+	import { online } from 'svelte/reactivity/window';
+	import { db } from '$lib/db/db';
+	import { PUBLIC_KEY, SERVICE_ID, TEMPLATE_ID } from '$lib/common/constants';
 
 	// @ts-ignore
-	function sendEmail(event) {
+	async function sendEmail(event) {
 		if (!browser) {
 			return;
 		}
@@ -21,31 +25,81 @@
 		// @ts-ignore
 		const category = document.getElementById('category').value;
 
-		emailjs.init({
-			publicKey: 'N9kf-ZYRoWAiH2kWq'
+		const feedbackData: Feedback = {
+			id: crypto.randomUUID(),
+			name: name ? name : 'anonymous',
+			email: email ? email : 'anonymous@anon.com',
+			message: `Category: ${category}.\n` + message,
+			receiver: 'Henry Ihenacho',
+			timestampInUtcString: new Date().toUTCString()
+		};
+
+		try {
+			if (!online.current) {
+				// Check if sync is supported before requesting sync
+				if (!isBackgroundSyncSupported()) {
+					console.error("The browser doesn't support background sync");
+					showErrorToast("Sorry, you're offline. Please try again when connected.");
+					return;
+				}
+
+				await saveFeedbackAndRequestSync(feedbackData);
+			} else {
+				await sendFeedbackAndRedirect(feedbackData);
+			}
+		} catch (error: any) {
+			console.error('Oops! Something went wrong. Please try again.');
+			console.error('error:', error);
+			showErrorToast('Oops! Something went wrong. Please try again.');
+		}
+	}
+
+	function isBackgroundSyncSupported() {
+		return (
+			'serviceWorker' in navigator &&
+			'SyncManager' in window &&
+			'sync' in ServiceWorkerRegistration.prototype
+		);
+	}
+
+	async function saveFeedbackAndRequestSync(feedbackData: Feedback) {
+		// Store feedback in Dexie when offline
+		await db.feedback.add(feedbackData);
+		const sw = await navigator.serviceWorker.ready;
+
+		navigator.serviceWorker.ready.then(function (swRegistration) {
+			// @ts-ignore
+			return swRegistration.sync.register('sync-feedback');
 		});
 
-		// Send the email using EmailJS
-		emailjs
-			.send('service_365k1gl', 'template_j4i3xba', {
-				name: name ? name : 'anonymous',
-				email: email ? email : 'anonymous@anon.com',
-				message: `Category: ${category}.\n` + message,
-				receiver: 'Henry Ihenacho'
-			})
-			.then(
-				function () {
-					showSuccessToast('Thank you for your feedback!.');
-					// @ts-ignore
-					document.getElementById('feedback-form').reset(); // Clear the form
-					window.location.href = '/'; // Redirect to the home page
-				},
-				function (error) {
-					console.error('Oops! Something went wrong. Please try again.' + error.text);
-					console.error('error:', error);
-					showErrorToast('Oops! Something went wrong. Please try again.');
-				}
-			);
+		// @ts-ignore
+		await sw.sync.register('sync-feedback');
+		// @ts-ignore
+		document.getElementById('feedback-form').reset();
+		console.log('Background sync registered successfully');
+		showSuccessToast(
+			"Feedback saved! It will be sent when you're back online. Redirecting...",
+			() => (window.location.href = '/'),
+			1500
+		);
+	}
+
+	async function sendFeedbackAndRedirect(feedbackData: Feedback) {
+		emailjs.init({
+			publicKey: PUBLIC_KEY
+		});
+
+		await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+			name: feedbackData.name,
+			email: feedbackData.email,
+			message: feedbackData.message,
+			receiver: feedbackData.receiver
+		});
+
+		showSuccessToast('Thank you for your feedback!.');
+		// @ts-ignore
+		document.getElementById('feedback-form').reset(); // Clear the form
+		window.location.href = '/'; // Redirect to the home page
 	}
 </script>
 

@@ -5,6 +5,9 @@
 
 // Imports:
 import { build, files, version, prerendered } from '$service-worker';
+import emailjs from '@emailjs/browser';
+import { db } from './lib/db/db';
+import { SERVICE_ID, PUBLIC_KEY, TEMPLATE_ID } from './lib/common/constants';
 
 // Initializations:
 const worker = /** @type {ServiceWorkerGlobalScope} */ (/** @type {unknown} */ (self));
@@ -71,7 +74,50 @@ worker.addEventListener('fetch', (event) => {
 });
 
 worker.addEventListener('message', (event) => {
+	console.debug('Received message', event.type);
 	if (event.data && event.type === 'SKIP_WAIT') {
 		worker.skipWaiting();
 	}
 });
+
+//#region SYNC FEEDBACK
+
+worker.addEventListener('sync', (event) => {
+	console.debug('Sync event triggered:', event.tag);
+	if (event.tag === 'sync-feedback') {
+		event.waitUntil(syncFeedback());
+	}
+});
+
+async function syncFeedback() {
+	console.debug('received sync event. Sending saved feedback.');
+	try {
+		const feedbacks = await db.feedback.toArray();
+		console.debug(`Fetched ${feedbacks.length} feedback items.`);
+		for (const feedback of feedbacks) {
+			try {
+				emailjs.init({
+					publicKey: PUBLIC_KEY
+				});
+
+				await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+					name: feedback.name,
+					email: feedback.email,
+					message: feedback.message,
+					receiver: feedback.receiver
+				});
+
+				// Remove successfully sent feedback
+				await db.feedback.delete(feedback.id);
+				console.debug(`Sent feedback. id: ${feedback.id}`);
+			} catch (error) {
+				console.error('Error sending feedback:', error);
+				// Leave failed feedback in the store to try again later
+			}
+		}
+	} catch (error) {
+		console.error('Sync error:', error);
+	}
+}
+
+//#endregion
