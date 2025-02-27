@@ -13,21 +13,24 @@
 		}
 		newTeamName = ''; // Clear input on success
 	}
+
+	function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
+		addTeam(newTeamName);
+	}
 </script>
 
-<!-- todo: add on enter key behaviour -->
 <div class="team-management">
 	<h2>Team Management</h2>
-	<div class="team-input">
+	<form class="team-input" onsubmit={handleSubmit}>
 		<input type="text" bind:value={newTeamName} placeholder="Enter team name" />
-
 		<ActionButton
 			color="#4caf50"
 			icon="fa-plus"
 			onClick={() => addTeam(newTeamName)}
 			ariaLabel="Add team to game"
 		/>
-	</div>
+	</form>
 </div>
 
 <style>
@@ -35,23 +38,20 @@
 		border-top: 1px solid #ddd;
 		padding-top: 10px;
 	}
-
 	.team-input {
 		display: flex;
 		gap: 10px;
 		margin-bottom: 20px;
 	}
-
 	input[type='text'] {
 		padding: 8px;
 		border: 1px solid #ddd;
 		border-radius: 4px;
 		flex-grow: 1;
 	}
-
 	@media (max-width: 450px) {
 		input[type='text'] {
-			/* prevent accessibility zoom in on phones  */
+			/* prevent accessibility zoom in on phones */
 			font-size: 16px;
 		}
 	}

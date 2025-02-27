@@ -11,6 +11,7 @@
 </script>
 
 <button
+	type="button"
 	class="action-button"
 	{disabled}
 	aria-label={ariaLabel}
