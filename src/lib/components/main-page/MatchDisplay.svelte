@@ -3,6 +3,7 @@
 	import { game } from '$lib/main/game.svelte';
 	import MatchButtons from './MatchButtons.svelte';
 	import MatchSlotComponent from './MatchSlotComponent.svelte';
+	import Timer from './Timer.svelte';
 
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
 
@@ -14,7 +15,7 @@
 	{#if isMatchInProgress}
 		<div class="current-match">
 			<MatchSlotComponent team={teamA} slot={Slot.A} />
-			<div class="vs">VS</div>
+			<Timer />
 			<MatchSlotComponent team={teamB} slot={Slot.B} />
 		</div>
 		<MatchButtons {teamA} {teamB} />
@@ -36,11 +37,5 @@
 
 		background-color: #f8f8f8;
 		border-radius: 8px;
-	}
-
-	.vs {
-		margin: 0 20px;
-		font-weight: bold;
-		font-size: 1.5rem;
 	}
 </style>

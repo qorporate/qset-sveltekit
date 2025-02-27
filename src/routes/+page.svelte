@@ -6,6 +6,7 @@
 	import TeamManagement from '$lib/components/main-page/TeamManagement.svelte';
 	import UndoRedo from '$lib/components/main-page/UndoRedo.svelte';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
+	import TimeSelector from '$lib/components/main-page/TimeSelector.svelte';
 
 	const SITE_URL = 'https://qset.qballxi.com';
 	const DESCRIPTION = "Manage sets when playing sports. Add as many teams as you'd like.";
@@ -27,6 +28,7 @@
 	<Nav page="home" />
 	<UndoRedo />
 	<MatchDisplay />
+	<TimeSelector />
 	<QueueDisplay />
 	<TeamManagement />
 	<Reset />
