@@ -9,15 +9,17 @@
 </script>
 
 <div class="nav-container">
-	<a class="logo" href="{base}/">QSet</a>
+	<a class="logo" id="logo" href="{base}/">QSet</a>
 	<div class="nav-links">
 		{#if props.page === 'home'}
 			<a href="{base}/guide" class="nav-link primary">Guide</a>
 			<a href="{base}/feedback" class="nav-link secondary">Feedback</a>
 		{:else if props.page === 'guide'}
+			<a href="{base}/" class="nav-link primary">Home</a>
 			<a href="{base}/feedback" class="nav-link secondary">Feedback</a>
 		{:else if props.page === 'feedback'}
-			<a href="{base}/guide" class="nav-link primary">Guide</a>
+			<a href="{base}/" class="nav-link primary">Home</a>
+			<a href="{base}/guide" class="nav-link secondary">Guide</a>
 		{/if}
 	</div>
 </div>
@@ -33,10 +35,16 @@
 	}
 
 	.logo {
-		font-size: 1.5rem;
+		font-size: 1.4rem;
 		font-weight: bold;
 		text-decoration: none;
 		color: black;
+	}
+
+	#logo {
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		margin-right: 3rem;
 	}
 
 	.nav-links {
