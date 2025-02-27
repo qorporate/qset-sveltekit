@@ -113,11 +113,17 @@
 			receiver: feedbackData.receiver
 		});
 
-		showSuccessToast('Thank you for your feedback!.');
 		// @ts-ignore
 		document.getElementById('feedback-form').reset(); // Clear the form
-		window.location.href = '/'; // Redirect to the home page
-		isSubmitting = false;
+
+		showSuccessToast(
+			'Thank you for your feedback!. Redirecting...',
+			() => {
+				window.location.href = '/';
+				isSubmitting = false;
+			},
+			1500
+		);
 	}
 </script>
 
