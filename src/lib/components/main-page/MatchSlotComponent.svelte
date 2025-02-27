@@ -3,10 +3,16 @@
 	import { formatTeamStats, editTeamName } from '$lib/common/util';
 	import { Team } from '$lib/main/classes.svelte';
 	import { game } from '$lib/main/game.svelte';
+	import { timerManager } from '$lib/main/time.svelte';
 
 	interface Props {
 		team: Team;
 		slot: Slot;
+	}
+
+	function swapTeamInMatch(slot: Slot) {
+		game.swapTeamInMatch(slot);
+		timerManager.resetTimer();
 	}
 
 	const { team, slot }: Props = $props();
@@ -31,7 +37,7 @@
 	<button
 		disabled={isSwapButtonDisabled}
 		class="move-button match-team-button"
-		onclick={() => game.swapTeamInMatch(slot)}
+		onclick={() => swapTeamInMatch(slot)}
 		aria-label="Move Team Into Queue"
 	>
 		<i class="fas fa-chevron-down"></i>
