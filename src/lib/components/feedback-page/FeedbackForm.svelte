@@ -7,6 +7,9 @@
 	import { db } from '$lib/db/db';
 	import { PUBLIC_KEY, SERVICE_ID, TEMPLATE_ID } from '$lib/common/constants';
 
+	// State for tracking form submission
+	let isSubmitting = $state(false);
+
 	// @ts-ignore
 	async function sendEmail(event) {
 		if (!browser) {
@@ -15,24 +18,13 @@
 
 		event.preventDefault(); // Prevent the default form submission behavior
 
-		// Get form data
-		// @ts-ignore
-		const name = document.getElementById('name').value;
-		// @ts-ignore
-		const email = document.getElementById('email').value;
-		// @ts-ignore
-		const message = document.getElementById('message').value;
-		// @ts-ignore
-		const category = document.getElementById('category').value;
+		// Prevent multiple submissions
+		if (isSubmitting) return;
 
-		const feedbackData: Feedback = {
-			id: crypto.randomUUID(),
-			name: name ? name : 'anonymous',
-			email: email ? email : 'anonymous@anon.com',
-			message: `Category: ${category}.\n` + message,
-			receiver: 'Henry Ihenacho',
-			timestampInUtcString: new Date().toUTCString()
-		};
+		// Set submitting state to true
+		isSubmitting = true;
+
+		const feedbackData = getFeedbackData();
 
 		try {
 			if (!online.current) {
@@ -51,7 +43,29 @@
 			console.error('Oops! Something went wrong. Please try again.');
 			console.error('error:', error);
 			showErrorToast('Oops! Something went wrong. Please try again.');
+			isSubmitting = false;
 		}
+	}
+
+	function getFeedbackData(): Feedback {
+		// Get form data
+		// @ts-ignore
+		const name = document.getElementById('name').value;
+		// @ts-ignore
+		const email = document.getElementById('email').value;
+		// @ts-ignore
+		const message = document.getElementById('message').value;
+		// @ts-ignore
+		const category = document.getElementById('category').value;
+
+		return {
+			id: crypto.randomUUID(),
+			name: name ? name : 'anonymous',
+			email: email ? email : 'anonymous@anon.com',
+			message: `Category: ${category}.\n` + message,
+			receiver: 'Henry Ihenacho',
+			timestampInUtcString: new Date().toUTCString()
+		};
 	}
 
 	function isBackgroundSyncSupported() {
@@ -79,7 +93,10 @@
 		console.log('Background sync registered successfully');
 		showSuccessToast(
 			"Feedback saved! It will be sent when you're back online. Redirecting...",
-			() => (window.location.href = '/'),
+			() => {
+				window.location.href = '/';
+				isSubmitting = false;
+			},
 			1500
 		);
 	}
@@ -100,6 +117,7 @@
 		// @ts-ignore
 		document.getElementById('feedback-form').reset(); // Clear the form
 		window.location.href = '/'; // Redirect to the home page
+		isSubmitting = false;
 	}
 </script>
 
@@ -139,7 +157,14 @@
 			required
 		></textarea>
 
-		<button type="submit">Submit Feedback</button>
+		<button type="submit" disabled={isSubmitting} class="submit-button">
+			{#if isSubmitting}
+				<div class="spinner"></div>
+				<span>Sending...</span>
+			{:else}
+				Submit Feedback
+			{/if}
+		</button>
 	</form>
 
 	<div class="form-footer">Your feedback helps make QSet better for everyone. Thank you!</div>
@@ -189,6 +214,9 @@
 	}
 
 	#feedback-form button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		background-color: #4caf50;
 		color: white;
 		border: none;
@@ -221,6 +249,26 @@
 		background: white;
 		font-size: 0.8rem;
 	}
+
+	.spinner {
+		width: 18px;
+		height: 18px;
+		border: 3px solid transparent;
+		border-top-color: white;
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+		margin-right: 8px;
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
 	@media (max-width: 450px) {
 		#feedback-form input,
 		#feedback-form textarea,
