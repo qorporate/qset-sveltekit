@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { CurrentState } from '$lib/common/enums';
+	import { game } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
 	let customTimeInput = $state('');
@@ -7,6 +9,7 @@
 	// Derived values
 	const timeOptions = $derived(timerManager.timeOptions);
 	const selectedTime = $derived(timerManager.selectedTime);
+	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
 
 	// Set custom time
 	function setCustomTime() {
@@ -14,13 +17,13 @@
 		if (!isNaN(minutes) && minutes > 0) {
 			timerManager.setTime(minutes);
 		}
+
+		customTimeInput = '';
 	}
 </script>
 
 <div class="time-selector">
-	<div class="selector-header">
-		<h2>Game Timer</h2>
-	</div>
+	<h2>Game Timer</h2>
 
 	<div class="time-options">
 		{#each timeOptions as option}
@@ -31,21 +34,27 @@
 				{option.label}
 			</button>
 		{/each}
+	</div>
 
-		<div class="custom-time">
-			<input type="number" bind:value={customTimeInput} placeholder="Custom (mins)" min="1" />
-			<button class="set-btn" onclick={setCustomTime}>Set</button>
-		</div>
+	<div class="custom-time">
+		<input type="number" bind:value={customTimeInput} placeholder="Custom (mins)" min="1" />
+		<button class="set-btn" onclick={setCustomTime}>Set</button>
 	</div>
 
 	<div class="timer-controls">
 		{#if isRunning}
-			<button class="control-btn pause" aria-label="Pause" onclick={() => timerManager.pauseTimer()}
-				><i class="fa fa-pause" aria-hidden="true"></i>
+			<button
+				class="control-btn pause"
+				disabled={!isMatchInProgress}
+				aria-label="Pause"
+				onclick={() => timerManager.pauseTimer()}
+			>
+				<i class="fa fa-pause" aria-hidden="true"></i>
 			</button>
 		{:else}
 			<button
 				class="control-btn resume"
+				disabled={!isMatchInProgress}
 				aria-label="Start or Play"
 				onclick={() => timerManager.resumeTimer()}
 			>
@@ -54,6 +63,7 @@
 		{/if}
 		<button
 			class="control-btn reset"
+			disabled={!isMatchInProgress}
 			aria-label="Stop timer"
 			onclick={() => timerManager.resetTimer()}
 		>
@@ -71,21 +81,14 @@
 		padding-top: 10px;
 	}
 
-	.selector-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 10px;
-	}
-
-	.selector-header h2 {
-		margin: 0;
-		font-size: 1rem;
+	h2 {
+		margin: 0 0 15px 0;
+		font-size: 1.2rem;
 	}
 
 	.time-options {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
 		gap: 8px;
 		margin-bottom: 15px;
 	}
@@ -94,9 +97,10 @@
 		background-color: #f0f0f0;
 		border: 1px solid #ddd;
 		border-radius: 4px;
-		padding: 5px 10px;
+		padding: 10px;
 		cursor: pointer;
 		font-size: 0.875rem;
+		text-align: center;
 	}
 
 	.time-option.active {
@@ -108,14 +112,23 @@
 	.custom-time {
 		display: flex;
 		gap: 5px;
+		margin-bottom: 15px;
 	}
 
 	.custom-time input {
-		width: 100px;
-		padding: 5px;
+		flex-grow: 1;
+		padding: 10px;
 		border: 1px solid #ddd;
 		border-radius: 4px;
 		font-size: 0.875rem;
+		appearance: textfield;
+		-moz-appearance: textfield;
+	}
+
+	.custom-time input::-webkit-outer-spin-button,
+	.custom-time input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
 	}
 
 	.set-btn {
@@ -123,7 +136,7 @@
 		color: white;
 		border: none;
 		border-radius: 4px;
-		padding: 5px 10px;
+		padding: 10px 15px;
 		cursor: pointer;
 		font-size: 0.875rem;
 	}
@@ -131,19 +144,33 @@
 	/* Controls */
 	.timer-controls {
 		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		margin-top: 5px;
+		justify-content: center;
+		gap: 15px;
 	}
 
 	.control-btn {
-		padding: 6px 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		width: 80px;
+		height: 40px;
+
 		border: none;
 		border-radius: 4px;
+
 		cursor: pointer;
-		font-weight: bold;
+		font-size: 1rem;
 		transition: all 0.2s;
-		font-size: 0.875rem;
+	}
+
+	.control-btn:enabled:hover {
+		opacity: 0.9;
+	}
+
+	.control-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
 	.resume {
@@ -161,7 +188,9 @@
 		color: white;
 	}
 
-	.control-btn:hover {
-		opacity: 0.9;
+	@media (min-width: 480px) {
+		.time-options {
+			grid-template-columns: repeat(4, 1fr);
+		}
 	}
 </style>
