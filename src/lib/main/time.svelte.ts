@@ -1,12 +1,4 @@
 export class TimerManager {
-	// Timer state
-	timeOptions = $state([
-		{ label: '7 mins', value: 7 },
-		{ label: '10 mins', value: 10 },
-		{ label: '15 mins', value: 15 },
-		{ label: '20 mins', value: 20 }
-	]);
-
 	selectedTime = $state(10); // Default to 10 minutes
 	remainingSeconds = $state(10 * 60);
 	isRunning = $state(false);

@@ -4,32 +4,31 @@
 	import { timerManager } from '$lib/main/time.svelte';
 
 	let customTimeInput = $state('');
+	let showCustomInput = $state(false);
 	const isRunning = $derived(timerManager.isRunning);
 	const remainingSeconds = $derived(timerManager.remainingSeconds);
-
-	// Derived values
-	const timeOptions = $derived(timerManager.timeOptions);
-	const selectedTime = $derived(timerManager.selectedTime);
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
 
 	// Derived value to determine whether to show time selection or controls
 	const showTimeSelection = $derived(
-		!isRunning && (remainingSeconds === 0 || remainingSeconds === selectedTime * 60)
+		!isRunning && (remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
 	);
 
-	// Set custom time
+	function setAndStartTimer(minutes: number) {
+		timerManager.setTime(minutes);
+		timerManager.startTimer();
+	}
+
+	function showCustomTimeInput() {
+		showCustomInput = true;
+	}
+
 	function setCustomTime() {
 		const minutes = parseInt(customTimeInput);
 		if (!isNaN(minutes) && minutes > 0) {
-			timerManager.setTime(minutes);
-		}
-		customTimeInput = '';
-	}
-
-	// Start the timer
-	function startTimer() {
-		if (selectedTime > 0) {
-			timerManager.startTimer();
+			setAndStartTimer(minutes);
+			showCustomInput = false;
+			customTimeInput = '';
 		}
 	}
 </script>
@@ -38,25 +37,18 @@
 	<h2>Timer</h2>
 
 	{#if showTimeSelection}
-		<div class="time-options">
-			{#each timeOptions as option}
-				<button
-					class="time-option {selectedTime === option.value ? 'active' : ''}"
-					onclick={() => timerManager.setTime(option.value)}
-				>
-					{option.label}
-				</button>
-			{/each}
-		</div>
-
-		<div class="custom-time">
-			<input type="number" bind:value={customTimeInput} placeholder="Custom (mins)" min="1" />
-			<button class="set-btn" onclick={setCustomTime}>Set</button>
-		</div>
-
-		<button class="start-btn" onclick={startTimer} disabled={selectedTime === 0}>
-			Start Timer
-		</button>
+		{#if showCustomInput}
+			<div class="custom-time">
+				<input type="number" bind:value={customTimeInput} placeholder="Enter minutes" min="1" />
+				<button class="set-btn" onclick={setCustomTime}>Set</button>
+			</div>
+		{:else}
+			<div class="time-options">
+				<button class="time-option" onclick={() => setAndStartTimer(7)}>7 mins</button>
+				<button class="time-option" onclick={() => setAndStartTimer(10)}>10 mins</button>
+				<button class="time-option" onclick={showCustomTimeInput}>Custom</button>
+			</div>
+		{/if}
 	{:else}
 		<div class="timer-controls">
 			{#if isRunning}
@@ -102,16 +94,18 @@
 	h2 {
 		margin: 0 0 15px 0;
 		font-size: 1.2rem;
+		text-align: center;
 	}
 
 	.time-options {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 8px;
+		display: flex;
+		justify-content: space-between;
+		gap: 10px;
 		margin-bottom: 15px;
 	}
 
 	.time-option {
+		flex: 1;
 		background-color: #f0f0f0;
 		border: 1px solid #ddd;
 		border-radius: 4px;
@@ -119,12 +113,6 @@
 		cursor: pointer;
 		font-size: 0.875rem;
 		text-align: center;
-	}
-
-	.time-option.active {
-		background-color: #4caf50;
-		color: white;
-		border-color: #4caf50;
 	}
 
 	.custom-time {
@@ -149,8 +137,7 @@
 		margin: 0;
 	}
 
-	.set-btn,
-	.start-btn {
+	.set-btn {
 		background-color: #4caf50;
 		color: white;
 		border: none;
@@ -158,15 +145,6 @@
 		padding: 10px 15px;
 		cursor: pointer;
 		font-size: 0.875rem;
-	}
-
-	.start-btn {
-		width: 100%;
-	}
-
-	.start-btn:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
 	}
 
 	/* Controls */
@@ -211,11 +189,5 @@
 	.reset {
 		background-color: #f44336;
 		color: white;
-	}
-
-	@media (min-width: 480px) {
-		.time-options {
-			grid-template-columns: repeat(4, 1fr);
-		}
 	}
 </style>
