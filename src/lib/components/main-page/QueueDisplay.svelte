@@ -7,7 +7,7 @@
 
 <div>
 	<h2>
-		Teams in Queue
+		Queue
 		<span class="waiting-count">({teams.length} teams)</span>
 	</h2>
 	<ul class="queue-list">

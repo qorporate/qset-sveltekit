@@ -21,7 +21,7 @@
 </script>
 
 <div class="team-management">
-	<h2>Team Management</h2>
+	<h2>Add Teams</h2>
 	<form class="team-input" onsubmit={handleSubmit}>
 		<input type="text" bind:value={newTeamName} placeholder="Enter team name" />
 		<ActionButton

@@ -5,11 +5,17 @@
 
 	let customTimeInput = $state('');
 	const isRunning = $derived(timerManager.isRunning);
+	const remainingSeconds = $derived(timerManager.remainingSeconds);
 
 	// Derived values
 	const timeOptions = $derived(timerManager.timeOptions);
 	const selectedTime = $derived(timerManager.selectedTime);
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
+
+	// Derived value to determine whether to show time selection or controls
+	const showTimeSelection = $derived(
+		!isRunning && (remainingSeconds === 0 || remainingSeconds === selectedTime * 60)
+	);
 
 	// Set custom time
 	function setCustomTime() {
@@ -17,59 +23,71 @@
 		if (!isNaN(minutes) && minutes > 0) {
 			timerManager.setTime(minutes);
 		}
-
 		customTimeInput = '';
+	}
+
+	// Start the timer
+	function startTimer() {
+		if (selectedTime > 0) {
+			timerManager.startTimer();
+		}
 	}
 </script>
 
 <div class="time-selector">
-	<h2>Game Timer</h2>
+	<h2>Timer</h2>
 
-	<div class="time-options">
-		{#each timeOptions as option}
-			<button
-				class="time-option {selectedTime === option.value ? 'active' : ''}"
-				onclick={() => timerManager.setTime(option.value)}
-			>
-				{option.label}
-			</button>
-		{/each}
-	</div>
+	{#if showTimeSelection}
+		<div class="time-options">
+			{#each timeOptions as option}
+				<button
+					class="time-option {selectedTime === option.value ? 'active' : ''}"
+					onclick={() => timerManager.setTime(option.value)}
+				>
+					{option.label}
+				</button>
+			{/each}
+		</div>
 
-	<div class="custom-time">
-		<input type="number" bind:value={customTimeInput} placeholder="Custom (mins)" min="1" />
-		<button class="set-btn" onclick={setCustomTime}>Set</button>
-	</div>
+		<div class="custom-time">
+			<input type="number" bind:value={customTimeInput} placeholder="Custom (mins)" min="1" />
+			<button class="set-btn" onclick={setCustomTime}>Set</button>
+		</div>
 
-	<div class="timer-controls">
-		{#if isRunning}
-			<button
-				class="control-btn pause"
-				disabled={!isMatchInProgress}
-				aria-label="Pause"
-				onclick={() => timerManager.pauseTimer()}
-			>
-				<i class="fa fa-pause" aria-hidden="true"></i>
-			</button>
-		{:else}
-			<button
-				class="control-btn resume"
-				disabled={!isMatchInProgress}
-				aria-label="Start or Play"
-				onclick={() => timerManager.resumeTimer()}
-			>
-				<i class="fa fa-play" aria-hidden="true"></i>
-			</button>
-		{/if}
-		<button
-			class="control-btn reset"
-			disabled={!isMatchInProgress}
-			aria-label="Stop timer"
-			onclick={() => timerManager.resetTimer()}
-		>
-			<i class="fa fa-stop" aria-hidden="true"></i>
+		<button class="start-btn" onclick={startTimer} disabled={selectedTime === 0}>
+			Start Timer
 		</button>
-	</div>
+	{:else}
+		<div class="timer-controls">
+			{#if isRunning}
+				<button
+					class="control-btn pause"
+					disabled={!isMatchInProgress}
+					aria-label="Pause"
+					onclick={() => timerManager.pauseTimer()}
+				>
+					<i class="fa fa-pause" aria-hidden="true"></i>
+				</button>
+			{:else}
+				<button
+					class="control-btn resume"
+					disabled={!isMatchInProgress}
+					aria-label="Resume"
+					onclick={() => timerManager.resumeTimer()}
+				>
+					<i class="fa fa-play" aria-hidden="true"></i>
+				</button>
+			{/if}
+			<button
+				class="control-btn reset"
+				disabled={!isMatchInProgress}
+				aria-label="Stop timer"
+				onclick={() => timerManager.resetTimer()}
+			>
+				<i class="fa fa-stop" aria-hidden="true"></i>
+			</button>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -131,7 +149,8 @@
 		margin: 0;
 	}
 
-	.set-btn {
+	.set-btn,
+	.start-btn {
 		background-color: #4caf50;
 		color: white;
 		border: none;
@@ -139,6 +158,15 @@
 		padding: 10px 15px;
 		cursor: pointer;
 		font-size: 0.875rem;
+	}
+
+	.start-btn {
+		width: 100%;
+	}
+
+	.start-btn:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
 	/* Controls */
@@ -152,13 +180,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
 		width: 80px;
 		height: 40px;
-
 		border: none;
 		border-radius: 4px;
-
 		cursor: pointer;
 		font-size: 1rem;
 		transition: all 0.2s;
