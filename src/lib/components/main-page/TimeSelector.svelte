@@ -31,16 +31,24 @@
 			customTimeInput = '';
 		}
 	}
+
+	function cancelCustomTime() {
+		showCustomInput = false;
+		customTimeInput = '';
+	}
 </script>
 
-<div class="time-selector">
+<div class="time-selector" hidden={!isMatchInProgress}>
 	<h2>Timer</h2>
 
 	{#if showTimeSelection}
 		{#if showCustomInput}
 			<div class="custom-time">
 				<input type="number" bind:value={customTimeInput} placeholder="Enter minutes" min="1" />
-				<button class="set-btn" onclick={setCustomTime}>Set</button>
+				<div class="custom-time-buttons">
+					<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
+					<button class="set-btn" onclick={setCustomTime}>Set</button>
+				</div>
 			</div>
 		{:else}
 			<div class="time-options">
@@ -54,7 +62,6 @@
 			{#if isRunning}
 				<button
 					class="control-btn pause"
-					disabled={!isMatchInProgress}
 					aria-label="Pause"
 					onclick={() => timerManager.pauseTimer()}
 				>
@@ -63,7 +70,6 @@
 			{:else}
 				<button
 					class="control-btn resume"
-					disabled={!isMatchInProgress}
 					aria-label="Resume"
 					onclick={() => timerManager.resumeTimer()}
 				>
@@ -72,7 +78,6 @@
 			{/if}
 			<button
 				class="control-btn reset"
-				disabled={!isMatchInProgress}
 				aria-label="Stop timer"
 				onclick={() => timerManager.resetTimer()}
 			>
@@ -94,7 +99,6 @@
 	h2 {
 		margin: 0 0 15px 0;
 		font-size: 1.2rem;
-		text-align: center;
 	}
 
 	.time-options {
@@ -106,8 +110,8 @@
 
 	.time-option {
 		flex: 1;
-		background-color: #f0f0f0;
-		border: 1px solid #ddd;
+		background-color: white;
+		border: 1px solid #2196f3;
 		border-radius: 4px;
 		padding: 10px;
 		cursor: pointer;
@@ -117,12 +121,13 @@
 
 	.custom-time {
 		display: flex;
-		gap: 5px;
+		flex-direction: column;
+		gap: 10px;
 		margin-bottom: 15px;
 	}
 
 	.custom-time input {
-		flex-grow: 1;
+		width: 100%;
 		padding: 10px;
 		border: 1px solid #ddd;
 		border-radius: 4px;
@@ -137,14 +142,30 @@
 		margin: 0;
 	}
 
-	.set-btn {
-		background-color: #4caf50;
-		color: white;
+	.custom-time-buttons {
+		display: flex;
+		justify-content: space-between;
+		gap: 10px;
+	}
+
+	.set-btn,
+	.cancel-btn {
+		flex: 1;
 		border: none;
 		border-radius: 4px;
 		padding: 10px 15px;
 		cursor: pointer;
 		font-size: 0.875rem;
+	}
+
+	.set-btn {
+		background-color: #4caf50;
+		color: white;
+	}
+
+	.cancel-btn {
+		background-color: #f44336;
+		color: white;
 	}
 
 	/* Controls */

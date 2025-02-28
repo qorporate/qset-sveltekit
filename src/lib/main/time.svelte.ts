@@ -1,3 +1,5 @@
+import { showNonDismissibleSuccessToast, showSuccessToast } from '$lib/common/my-toasts';
+
 export class TimerManager {
 	selectedTime = $state(10); // Default to 10 minutes
 	remainingSeconds = $state(10 * 60);
@@ -24,6 +26,7 @@ export class TimerManager {
 					this.remainingSeconds--;
 				} else {
 					this.pauseTimer();
+					showNonDismissibleSuccessToast('Times up!');
 				}
 			}, 1000) as unknown as number;
 		}
