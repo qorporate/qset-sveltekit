@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { CurrentState } from '$lib/common/enums';
-	import { showErrorToast } from '$lib/common/my-toasts';
 	import { game } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
 	let customTimeInput = $state('');
 	let showCustomInput = $state(false);
+	let errorMessage = $state('');
 	const isRunning = $derived(timerManager.isRunning);
 	const remainingSeconds = $derived(timerManager.remainingSeconds);
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
@@ -22,20 +22,25 @@
 
 	function showCustomTimeInput() {
 		showCustomInput = true;
+		errorMessage = '';
 	}
 
 	function setCustomTime() {
 		const minutes = parseInt(customTimeInput);
-		if (!isNaN(minutes) && minutes > 0) {
+		if (isNaN(minutes) || minutes < 1) {
+			errorMessage = 'Please enter a valid number (minimum 1 minute)';
+		} else {
 			setAndStartTimer(minutes);
 			showCustomInput = false;
 			customTimeInput = '';
+			errorMessage = '';
 		}
 	}
 
 	function cancelCustomTime() {
 		showCustomInput = false;
 		customTimeInput = '';
+		errorMessage = '';
 	}
 </script>
 
@@ -45,10 +50,19 @@
 	{#if showTimeSelection}
 		{#if showCustomInput}
 			<div class="custom-time">
-				<input type="number" bind:value={customTimeInput} placeholder="How many minutes?" min="1" />
+				<input
+					type="number"
+					bind:value={customTimeInput}
+					placeholder="Enter minutes"
+					min="1"
+					class:error={errorMessage !== ''}
+				/>
 				<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
 				<button class="set-btn" onclick={setCustomTime}>Set</button>
 			</div>
+			{#if errorMessage}
+				<p class="error-message">{errorMessage}</p>
+			{/if}
 		{:else}
 			<div class="time-options">
 				<button class="time-option" onclick={() => setAndStartTimer(7)}>7 mins</button>
@@ -121,7 +135,7 @@
 	.custom-time {
 		display: flex;
 		gap: 10px;
-		margin-bottom: 15px;
+		margin-bottom: 5px;
 	}
 
 	.custom-time input {
@@ -132,6 +146,10 @@
 		font-size: 0.875rem;
 		appearance: textfield;
 		-moz-appearance: textfield;
+	}
+
+	.custom-time input.error {
+		border-color: #f44336;
 	}
 
 	.custom-time input::-webkit-outer-spin-button,
@@ -158,6 +176,13 @@
 	.cancel-btn {
 		background-color: #f44336;
 		color: white;
+	}
+
+	.error-message {
+		color: #f44336;
+		font-size: 0.75rem;
+		margin-top: 5px;
+		margin-bottom: 10px;
 	}
 
 	/* Controls */
