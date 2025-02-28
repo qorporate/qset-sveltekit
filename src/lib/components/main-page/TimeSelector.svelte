@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CurrentState } from '$lib/common/enums';
+	import { showErrorToast } from '$lib/common/my-toasts';
 	import { game } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
@@ -44,11 +45,9 @@
 	{#if showTimeSelection}
 		{#if showCustomInput}
 			<div class="custom-time">
-				<input type="number" bind:value={customTimeInput} placeholder="Enter minutes" min="1" />
-				<div class="custom-time-buttons">
-					<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
-					<button class="set-btn" onclick={setCustomTime}>Set</button>
-				</div>
+				<input type="number" bind:value={customTimeInput} placeholder="How many minutes?" min="1" />
+				<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
+				<button class="set-btn" onclick={setCustomTime}>Set</button>
 			</div>
 		{:else}
 			<div class="time-options">
@@ -121,13 +120,12 @@
 
 	.custom-time {
 		display: flex;
-		flex-direction: column;
 		gap: 10px;
 		margin-bottom: 15px;
 	}
 
 	.custom-time input {
-		width: 100%;
+		flex: 1;
 		padding: 10px;
 		border: 1px solid #ddd;
 		border-radius: 4px;
@@ -142,20 +140,14 @@
 		margin: 0;
 	}
 
-	.custom-time-buttons {
-		display: flex;
-		justify-content: space-between;
-		gap: 10px;
-	}
-
 	.set-btn,
 	.cancel-btn {
-		flex: 1;
 		border: none;
 		border-radius: 4px;
 		padding: 10px 15px;
 		cursor: pointer;
 		font-size: 0.875rem;
+		white-space: nowrap;
 	}
 
 	.set-btn {
