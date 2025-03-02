@@ -1,4 +1,4 @@
-import { showNonDismissibleSuccessToast, showSuccessToast } from '$lib/common/my-toasts';
+import { showNonDismissibleSuccessToast } from '$lib/common/my-toasts';
 
 export class TimerManager {
 	selectedTime = $state(10); // Default to 10 minutes
