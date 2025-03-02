@@ -1,3 +1,4 @@
+import { browser } from '$app/environment';
 import { LOCAL_STORAGE_ITEM_SelectedTime } from '$lib/common/constants';
 import { showNonDismissibleSuccessToast } from '$lib/common/my-toasts';
 
@@ -9,6 +10,10 @@ export class TimerManager {
 	isRunning = $state(false);
 	intervalId: number | null = $state(null);
 
+	constructor() {
+		this.loadSavedTime();
+	}
+
 	get formattedTime() {
 		const minutes = Math.floor(this.remainingSeconds / 60);
 		const seconds = this.remainingSeconds % 60;
@@ -19,6 +24,7 @@ export class TimerManager {
 		this.pauseTimer();
 		this.selectedTime = minutes;
 		this.remainingSeconds = minutes * 60;
+		this.saveTime();
 	}
 
 	startTimer() {
@@ -29,7 +35,7 @@ export class TimerManager {
 					this.remainingSeconds--;
 				} else {
 					this.pauseTimer();
-					showNonDismissibleSuccessToast('Times up!');
+					showNonDismissibleSuccessToast("Time's up!");
 				}
 			}, 1000) as unknown as number;
 		}
@@ -50,6 +56,22 @@ export class TimerManager {
 	resetTimer() {
 		this.pauseTimer();
 		this.remainingSeconds = this.selectedTime * 60;
+	}
+
+	saveTime() {
+		localStorage.setItem(LOCAL_STORAGE_ITEM_SelectedTime, this.selectedTime.toString());
+	}
+
+	loadSavedTime() {
+		if (browser) {
+			const savedTime = localStorage.getItem(LOCAL_STORAGE_ITEM_SelectedTime);
+			if (savedTime) {
+				this.selectedTime = parseInt(savedTime, 10);
+				this.remainingSeconds = this.selectedTime * 60;
+			}
+		}
+
+		console.debug("Can't load time. Not on browser yet.");
 	}
 }
 
