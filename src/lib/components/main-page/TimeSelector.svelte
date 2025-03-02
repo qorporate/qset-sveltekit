@@ -79,35 +79,24 @@
 	{/if}
 
 	<!-- When the custom input field is active, we don't want to show pause/play, no matter what -->
-	{#if !showCustomInput}
-		<!-- For all control buttons, we want them disabled when the time is not set (= 0 minutes) -->
+	<!-- And if the time is not set, there's no point in displaying play/pause -->
+	{#if !showCustomInput && !isTimeEqualToZero}
 		<div class="timer-controls">
-			{#if !isTimeEqualToZero}
-				{#if isTimerRunning}
-					<button
-						class="control-btn pause"
-						aria-label="Pause"
-						onclick={() => timerManager.pauseTimer()}
-					>
-						<i class="fa fa-pause" aria-hidden="true"></i>
-					</button>
-				{:else}
-					<button
-						class="control-btn resume"
-						aria-label="Resume"
-						onclick={() => timerManager.resumeTimer()}
-					>
-						<i class="fa fa-play" aria-hidden="true"></i>
-					</button>
-				{/if}
-				<button
-					class="control-btn reset"
-					aria-label="Stop timer"
-					onclick={() => timerManager.resetTimer()}
-				>
-					<i class="fa fa-stop" aria-hidden="true"></i>
-				</button>
-			{/if}
+			<button
+				class="control-btn {isTimerRunning ? 'pause' : 'resume'}"
+				aria-label={isTimerRunning ? 'Pause' : 'Resume'}
+				onclick={() => (isTimerRunning ? timerManager.pauseTimer() : timerManager.resumeTimer())}
+			>
+				<i class="fa fa-{isTimerRunning ? 'pause' : 'play'}" aria-hidden="true"></i>
+			</button>
+			<button
+				class="control-btn reset"
+				aria-label="Stop timer"
+				onclick={() => timerManager.resetTimer()}
+				disabled={!isTimerRunning}
+			>
+				<i class="fa fa-stop" aria-hidden="true"></i>
+			</button>
 		</div>
 	{/if}
 </div>
