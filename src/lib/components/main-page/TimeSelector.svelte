@@ -6,6 +6,7 @@
 	let customTimeInput = $state('');
 	let showCustomInput = $state(false);
 	let errorMessage = $state('');
+
 	const isRunning = $derived(timerManager.isRunning);
 	const remainingSeconds = $derived(timerManager.remainingSeconds);
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
@@ -14,6 +15,8 @@
 	const showTimeSelection = $derived(
 		!isRunning && (remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
 	);
+
+	const isTimeEqualToZero = $derived(remainingSeconds === 0);
 
 	function setAndStartTimer(minutes: number) {
 		timerManager.setTime(minutes);
@@ -76,12 +79,14 @@
 
 	<!-- When the custom input field is active, we don't want to show pause/play, no matter what -->
 	{#if !showCustomInput}
+		<!-- For all control buttons, we don't want them active when the time is not set -->
 		<div class="timer-controls">
 			{#if isRunning}
 				<button
 					class="control-btn pause"
 					aria-label="Pause"
 					onclick={() => timerManager.pauseTimer()}
+					disabled={isTimeEqualToZero}
 				>
 					<i class="fa fa-pause" aria-hidden="true"></i>
 				</button>
@@ -90,6 +95,7 @@
 					class="control-btn resume"
 					aria-label="Resume"
 					onclick={() => timerManager.resumeTimer()}
+					disabled={isTimeEqualToZero}
 				>
 					<i class="fa fa-play" aria-hidden="true"></i>
 				</button>
@@ -98,6 +104,7 @@
 				class="control-btn reset"
 				aria-label="Stop timer"
 				onclick={() => timerManager.resetTimer()}
+				disabled={isTimeEqualToZero}
 			>
 				<i class="fa fa-stop" aria-hidden="true"></i>
 			</button>
