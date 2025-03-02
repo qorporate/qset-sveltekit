@@ -11,7 +11,7 @@
 	const remainingSeconds = $derived(timerManager.remainingSeconds);
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
 
-	// Derived value to determine whether to show time selection or controls
+	// Derived value to determine whether to show time selection buttons
 	const showTimeSelection = $derived(
 		!isTimerRunning &&
 			(remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
