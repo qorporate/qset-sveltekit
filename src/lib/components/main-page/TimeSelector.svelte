@@ -114,7 +114,6 @@
 	h2 {
 		margin: 0 0 15px 0;
 		font-size: 1.2rem;
-		text-align: center;
 	}
 
 	.time-options {
