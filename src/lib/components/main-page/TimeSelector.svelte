@@ -4,45 +4,45 @@
 	import { timerManager } from '$lib/main/time.svelte';
 
 	let customTimeInput = $state('');
-	let showCustomInput = $state(false);
+	let isCustomInputVisible = $state(false);
 	let errorMessage = $state('');
 
 	const isTimerRunning = $derived(timerManager.isRunning);
-	const remainingSeconds = $derived(timerManager.remainingSeconds);
+	const timerRemainingSeconds = $derived(timerManager.remainingSeconds);
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
 
 	// Derived value to determine whether to show time selection buttons
-	const showTimeSelection = $derived(
+	const shouldShowTimeOptions = $derived(
 		!isTimerRunning &&
-			(remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
+			(timerRemainingSeconds === 0 || timerRemainingSeconds === timerManager.selectedTime * 60)
 	);
 
-	const isTimeEqualToZero = $derived(remainingSeconds === 0);
+	const hasNoTimeSet = $derived(timerRemainingSeconds === 0);
 
 	function setAndStartTimer(minutes: number) {
 		timerManager.setTime(minutes);
 		timerManager.startTimer();
 	}
 
-	function showCustomTimeInput() {
-		showCustomInput = true;
+	function openCustomTimeInput() {
+		isCustomInputVisible = true;
 		errorMessage = '';
 	}
 
-	function setCustomTime() {
+	function applyCustomTimeAndStart() {
 		const minutes = parseInt(customTimeInput);
 		if (isNaN(minutes) || minutes < 1) {
 			errorMessage = 'Please enter a valid number (minimum 1 minute)';
 		} else {
 			setAndStartTimer(minutes);
-			showCustomInput = false;
+			isCustomInputVisible = false;
 			customTimeInput = '';
 			errorMessage = '';
 		}
 	}
 
-	function cancelCustomTime() {
-		showCustomInput = false;
+	function closeCustomTimeInput() {
+		isCustomInputVisible = false;
 		customTimeInput = '';
 		errorMessage = '';
 	}
@@ -52,8 +52,8 @@
 	<div class="time-selector">
 		<h2>Timer</h2>
 
-		{#if showTimeSelection}
-			{#if showCustomInput}
+		{#if shouldShowTimeOptions}
+			{#if isCustomInputVisible}
 				<div class="custom-time">
 					<input
 						type="number"
@@ -63,8 +63,8 @@
 						class:error={errorMessage !== ''}
 					/>
 					<div class="custom-time-buttons">
-						<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
-						<button class="set-btn" onclick={setCustomTime}>Set</button>
+						<button class="cancel-btn" onclick={closeCustomTimeInput}>Cancel</button>
+						<button class="set-btn" onclick={applyCustomTimeAndStart}>Set</button>
 					</div>
 				</div>
 				{#if errorMessage}
@@ -74,14 +74,14 @@
 				<div class="time-options">
 					<button class="time-option" onclick={() => setAndStartTimer(7)}>7 mins</button>
 					<button class="time-option" onclick={() => setAndStartTimer(10)}>10 mins</button>
-					<button class="time-option" onclick={showCustomTimeInput}>Custom</button>
+					<button class="time-option" onclick={openCustomTimeInput}>Custom</button>
 				</div>
 			{/if}
 		{/if}
 
 		<!-- When the custom input field is active, we don't want to show pause/play, no matter what -->
 		<!-- And if the time is not set, there's no point in displaying play/pause -->
-		{#if !showCustomInput && !isTimeEqualToZero}
+		{#if !isCustomInputVisible && !hasNoTimeSet}
 			<div class="timer-controls">
 				<button
 					class="control-btn {isTimerRunning ? 'pause' : 'resume'}"
