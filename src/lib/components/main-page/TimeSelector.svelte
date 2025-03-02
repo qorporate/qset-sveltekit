@@ -72,7 +72,10 @@
 				<button class="time-option" onclick={showCustomTimeInput}>Custom</button>
 			</div>
 		{/if}
-	{:else}
+	{/if}
+
+	<!-- When the custom input field is active, we don't want to show pause/play, no matter what -->
+	{#if !showCustomInput}
 		<div class="timer-controls">
 			{#if isRunning}
 				<button
