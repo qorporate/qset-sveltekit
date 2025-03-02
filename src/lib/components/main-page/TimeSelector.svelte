@@ -13,7 +13,8 @@
 
 	// Derived value to determine whether to show time selection or controls
 	const showTimeSelection = $derived(
-		!isTimerRunning && (remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
+		!isTimerRunning &&
+			(remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
 	);
 
 	const isTimeEqualToZero = $derived(remainingSeconds === 0);
@@ -81,33 +82,32 @@
 	{#if !showCustomInput}
 		<!-- For all control buttons, we want them disabled when the time is not set (= 0 minutes) -->
 		<div class="timer-controls">
-			{#if isTimerRunning}
+			{#if !isTimeEqualToZero}
+				{#if isTimerRunning}
+					<button
+						class="control-btn pause"
+						aria-label="Pause"
+						onclick={() => timerManager.pauseTimer()}
+					>
+						<i class="fa fa-pause" aria-hidden="true"></i>
+					</button>
+				{:else}
+					<button
+						class="control-btn resume"
+						aria-label="Resume"
+						onclick={() => timerManager.resumeTimer()}
+					>
+						<i class="fa fa-play" aria-hidden="true"></i>
+					</button>
+				{/if}
 				<button
-					class="control-btn pause"
-					aria-label="Pause"
-					onclick={() => timerManager.pauseTimer()}
-					disabled={isTimeEqualToZero}
+					class="control-btn reset"
+					aria-label="Stop timer"
+					onclick={() => timerManager.resetTimer()}
 				>
-					<i class="fa fa-pause" aria-hidden="true"></i>
-				</button>
-			{:else}
-				<button
-					class="control-btn resume"
-					aria-label="Resume"
-					onclick={() => timerManager.resumeTimer()}
-					disabled={isTimeEqualToZero}
-				>
-					<i class="fa fa-play" aria-hidden="true"></i>
+					<i class="fa fa-stop" aria-hidden="true"></i>
 				</button>
 			{/if}
-			<button
-				class="control-btn reset"
-				aria-label="Stop timer"
-				onclick={() => timerManager.resetTimer()}
-				disabled={isTimeEqualToZero}
-			>
-				<i class="fa fa-stop" aria-hidden="true"></i>
-			</button>
 		</div>
 	{/if}
 </div>
