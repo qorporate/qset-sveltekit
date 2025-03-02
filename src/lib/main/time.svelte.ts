@@ -1,8 +1,10 @@
 import { showNonDismissibleSuccessToast } from '$lib/common/my-toasts';
 
+const DEFAULT_TIME_IN_MINUTES = 0;
+
 export class TimerManager {
-	selectedTime = $state(10); // Default to 10 minutes
-	remainingSeconds = $state(10 * 60);
+	selectedTime = $state(DEFAULT_TIME_IN_MINUTES);
+	remainingSeconds = $state(DEFAULT_TIME_IN_MINUTES * 60);
 	isRunning = $state(false);
 	intervalId: number | null = $state(null);
 
