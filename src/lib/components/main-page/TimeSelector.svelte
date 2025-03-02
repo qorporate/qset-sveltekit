@@ -7,13 +7,13 @@
 	let showCustomInput = $state(false);
 	let errorMessage = $state('');
 
-	const isRunning = $derived(timerManager.isRunning);
+	const isTimerRunning = $derived(timerManager.isRunning);
 	const remainingSeconds = $derived(timerManager.remainingSeconds);
 	const isMatchInProgress = $derived(game.currentState === CurrentState.MATCH_IN_PROGRESS);
 
 	// Derived value to determine whether to show time selection or controls
 	const showTimeSelection = $derived(
-		!isRunning && (remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
+		!isTimerRunning && (remainingSeconds === 0 || remainingSeconds === timerManager.selectedTime * 60)
 	);
 
 	const isTimeEqualToZero = $derived(remainingSeconds === 0);
@@ -79,9 +79,9 @@
 
 	<!-- When the custom input field is active, we don't want to show pause/play, no matter what -->
 	{#if !showCustomInput}
-		<!-- For all control buttons, we don't want them active when the time is not set -->
+		<!-- For all control buttons, we want them disabled when the time is not set (= 0 minutes) -->
 		<div class="timer-controls">
-			{#if isRunning}
+			{#if isTimerRunning}
 				<button
 					class="control-btn pause"
 					aria-label="Pause"
