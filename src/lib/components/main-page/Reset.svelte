@@ -10,6 +10,8 @@
 		);
 		if (confirmation) {
 			localStorage.removeItem(LOCAL_STORAGE_ITEM_GameState);
+			localStorage.removeItem(LOCAL_STORAGE_ITEM_SelectedTime);
+
 			location.reload(); // Refresh the page
 		}
 	}
