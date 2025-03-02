@@ -48,58 +48,60 @@
 	}
 </script>
 
-<div class="time-selector" hidden={!isMatchInProgress}>
-	<h2>Timer</h2>
+{#if isMatchInProgress}
+	<div class="time-selector">
+		<h2>Timer</h2>
 
-	{#if showTimeSelection}
-		{#if showCustomInput}
-			<div class="custom-time">
-				<input
-					type="number"
-					bind:value={customTimeInput}
-					placeholder="Enter minutes"
-					min="1"
-					class:error={errorMessage !== ''}
-				/>
-				<div class="custom-time-buttons">
-					<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
-					<button class="set-btn" onclick={setCustomTime}>Set</button>
+		{#if showTimeSelection}
+			{#if showCustomInput}
+				<div class="custom-time">
+					<input
+						type="number"
+						bind:value={customTimeInput}
+						placeholder="Enter minutes"
+						min="1"
+						class:error={errorMessage !== ''}
+					/>
+					<div class="custom-time-buttons">
+						<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
+						<button class="set-btn" onclick={setCustomTime}>Set</button>
+					</div>
 				</div>
-			</div>
-			{#if errorMessage}
-				<p class="error-message">{errorMessage}</p>
+				{#if errorMessage}
+					<p class="error-message">{errorMessage}</p>
+				{/if}
+			{:else}
+				<div class="time-options">
+					<button class="time-option" onclick={() => setAndStartTimer(7)}>7 mins</button>
+					<button class="time-option" onclick={() => setAndStartTimer(10)}>10 mins</button>
+					<button class="time-option" onclick={showCustomTimeInput}>Custom</button>
+				</div>
 			{/if}
-		{:else}
-			<div class="time-options">
-				<button class="time-option" onclick={() => setAndStartTimer(7)}>7 mins</button>
-				<button class="time-option" onclick={() => setAndStartTimer(10)}>10 mins</button>
-				<button class="time-option" onclick={showCustomTimeInput}>Custom</button>
+		{/if}
+
+		<!-- When the custom input field is active, we don't want to show pause/play, no matter what -->
+		<!-- And if the time is not set, there's no point in displaying play/pause -->
+		{#if !showCustomInput && !isTimeEqualToZero}
+			<div class="timer-controls">
+				<button
+					class="control-btn {isTimerRunning ? 'pause' : 'resume'}"
+					aria-label={isTimerRunning ? 'Pause' : 'Resume'}
+					onclick={() => (isTimerRunning ? timerManager.pauseTimer() : timerManager.resumeTimer())}
+				>
+					<i class="fa fa-{isTimerRunning ? 'pause' : 'play'}" aria-hidden="true"></i>
+				</button>
+				<button
+					class="control-btn reset"
+					aria-label="Stop timer"
+					onclick={() => timerManager.resetTimer()}
+					disabled={!isTimerRunning}
+				>
+					<i class="fa fa-stop" aria-hidden="true"></i>
+				</button>
 			</div>
 		{/if}
-	{/if}
-
-	<!-- When the custom input field is active, we don't want to show pause/play, no matter what -->
-	<!-- And if the time is not set, there's no point in displaying play/pause -->
-	{#if !showCustomInput && !isTimeEqualToZero}
-		<div class="timer-controls">
-			<button
-				class="control-btn {isTimerRunning ? 'pause' : 'resume'}"
-				aria-label={isTimerRunning ? 'Pause' : 'Resume'}
-				onclick={() => (isTimerRunning ? timerManager.pauseTimer() : timerManager.resumeTimer())}
-			>
-				<i class="fa fa-{isTimerRunning ? 'pause' : 'play'}" aria-hidden="true"></i>
-			</button>
-			<button
-				class="control-btn reset"
-				aria-label="Stop timer"
-				onclick={() => timerManager.resetTimer()}
-				disabled={!isTimerRunning}
-			>
-				<i class="fa fa-stop" aria-hidden="true"></i>
-			</button>
-		</div>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style>
 	.time-selector {
