@@ -135,6 +135,10 @@
 		text-align: center;
 	}
 
+	.time-option:hover {
+		background-color: #f8f8f8;
+	}
+
 	.custom-time {
 		display: flex;
 		gap: 10px;
