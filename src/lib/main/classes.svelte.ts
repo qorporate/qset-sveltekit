@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_ITEM } from '$lib/common/constants';
+import { LOCAL_STORAGE_ITEM_GameState } from '$lib/common/constants';
 import { Slot, CurrentState, MatchResult } from '$lib/common/enums';
 import { deepCopyTeam } from '$lib/common/util';
 import { browser } from '$app/environment';
@@ -312,7 +312,7 @@ export class Game {
 			return;
 		}
 
-		const savedState = localStorage.getItem(LOCAL_STORAGE_ITEM);
+		const savedState = localStorage.getItem(LOCAL_STORAGE_ITEM_GameState);
 		if (savedState) {
 			const state: State = JSON.parse(savedState);
 
@@ -325,7 +325,7 @@ export class Game {
 
 	saveGameState() {
 		const state: State = this.captureCurrentState();
-		localStorage.setItem(LOCAL_STORAGE_ITEM, JSON.stringify(state));
+		localStorage.setItem(LOCAL_STORAGE_ITEM_GameState, JSON.stringify(state));
 	}
 
 	private restoreState(state: State) {

@@ -1,12 +1,15 @@
 <script>
-	import { LOCAL_STORAGE_ITEM } from '$lib/common/constants';
+	import {
+		LOCAL_STORAGE_ITEM_GameState,
+		LOCAL_STORAGE_ITEM_SelectedTime
+	} from '$lib/common/constants';
 
 	function resetGame() {
 		const confirmation = confirm(
 			'Are you sure you want to reset the game? This action is unrecoverable.'
 		);
 		if (confirmation) {
-			localStorage.removeItem(LOCAL_STORAGE_ITEM);
+			localStorage.removeItem(LOCAL_STORAGE_ITEM_GameState);
 			location.reload(); // Refresh the page
 		}
 	}
