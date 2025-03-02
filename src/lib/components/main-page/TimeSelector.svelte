@@ -57,8 +57,10 @@
 					min="1"
 					class:error={errorMessage !== ''}
 				/>
-				<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
-				<button class="set-btn" onclick={setCustomTime}>Set</button>
+				<div class="custom-time-buttons">
+					<button class="cancel-btn" onclick={cancelCustomTime}>Cancel</button>
+					<button class="set-btn" onclick={setCustomTime}>Set</button>
+				</div>
 			</div>
 			{#if errorMessage}
 				<p class="error-message">{errorMessage}</p>
@@ -112,6 +114,7 @@
 	h2 {
 		margin: 0 0 15px 0;
 		font-size: 1.2rem;
+		text-align: center;
 	}
 
 	.time-options {
@@ -227,5 +230,29 @@
 	.reset {
 		background-color: #f44336;
 		color: white;
+	}
+
+	.custom-time-buttons {
+		display: flex;
+		gap: 10px;
+	}
+
+	@media (max-width: 424px) {
+		.custom-time {
+			flex-direction: column;
+		}
+
+		.custom-time input {
+			width: 100%;
+		}
+
+		.custom-time-buttons {
+			width: 100%;
+		}
+
+		.set-btn,
+		.cancel-btn {
+			flex: 1;
+		}
 	}
 </style>
