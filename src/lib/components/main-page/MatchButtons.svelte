@@ -2,10 +2,16 @@
 	import { MatchResult } from '$lib/common/enums';
 	import { Team } from '$lib/main/classes.svelte';
 	import { game } from '$lib/main/game.svelte';
+	import { timerManager } from '$lib/main/time.svelte';
 
 	interface Props {
 		teamA: Team;
 		teamB: Team;
+	}
+
+	function handleResult(result: MatchResult) {
+		game.handleResult(result);
+		timerManager.resetTimer();
 	}
 
 	const { teamA, teamB }: Props = $props();
@@ -13,18 +19,18 @@
 </script>
 
 <div class="buttons">
-	<button class="win left" onclick={() => game.handleResult(MatchResult.Team1)}>
+	<button class="win left" onclick={() => handleResult(MatchResult.Team1)}>
 		<span id="left-team-name">{teamA.name} Wins</span>
 	</button>
 	<button
 		class="draw"
 		id="draw-button"
 		hidden={!isDrawButtonAvailable}
-		onclick={() => game.handleResult(MatchResult.Draw)}
+		onclick={() => handleResult(MatchResult.Draw)}
 	>
 		Draw
 	</button>
-	<button class="win right" onclick={() => game.handleResult(MatchResult.Team2)}>
+	<button class="win right" onclick={() => handleResult(MatchResult.Team2)}>
 		<span id="right-team-name">{teamB.name} Wins</span>
 	</button>
 </div>

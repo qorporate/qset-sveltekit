@@ -47,6 +47,10 @@
 		margin-right: 3rem;
 	}
 
+	#logo:hover {
+		opacity: 0.3;
+	}
+
 	.nav-links {
 		display: flex;
 		gap: 0.75rem;

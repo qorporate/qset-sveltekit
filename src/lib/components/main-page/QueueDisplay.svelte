@@ -7,8 +7,8 @@
 
 <div>
 	<h2>
-		Teams in Queue
-		<span class="waiting-count">({teams.length} teams)</span>
+		Queue
+		<span class="waiting-count">({teams.length} {teams.length === 1 ? 'team' : 'teams'})</span>
 	</h2>
 	<ul class="queue-list">
 		{#each teams as team, index}

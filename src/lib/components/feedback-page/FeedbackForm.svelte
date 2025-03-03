@@ -5,7 +5,11 @@
 	import emailjs from '@emailjs/browser';
 	import { online } from 'svelte/reactivity/window';
 	import { db } from '$lib/db/db';
-	import { PUBLIC_KEY, SERVICE_ID, TEMPLATE_ID } from '$lib/common/constants';
+	import {
+		EmailJs_PUBLIC_KEY,
+		EmailJs_SERVICE_ID,
+		EmailJs_TEMPLATE_ID
+	} from '$lib/common/constants';
 
 	// State for tracking form submission
 	let isSubmitting = $state(false);
@@ -103,10 +107,10 @@
 
 	async function sendFeedbackAndRedirect(feedbackData: Feedback) {
 		emailjs.init({
-			publicKey: PUBLIC_KEY
+			publicKey: EmailJs_PUBLIC_KEY
 		});
 
-		await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+		await emailjs.send(EmailJs_SERVICE_ID, EmailJs_TEMPLATE_ID, {
 			name: feedbackData.name,
 			email: feedbackData.email,
 			message: feedbackData.message,

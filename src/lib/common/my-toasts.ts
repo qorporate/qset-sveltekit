@@ -21,3 +21,14 @@ export function showSuccessToast(message: string, callback?: () => void, duratio
 		onpop: callback ? callback : undefined
 	});
 }
+
+export function showNonDismissibleSuccessToast(message: string) {
+	return toast.push(message, {
+		theme: {
+			'--toastColor': 'white',
+			'--toastBackground': '#059A1D',
+			'--toastBarHeight': 0
+		},
+		initial: 0
+	});
+}
