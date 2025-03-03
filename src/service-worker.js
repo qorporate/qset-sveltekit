@@ -7,7 +7,11 @@
 import { build, files, version, prerendered } from '$service-worker';
 import emailjs from '@emailjs/browser';
 import { db } from './lib/db/db';
-import { SERVICE_ID, PUBLIC_KEY, TEMPLATE_ID } from './lib/common/constants';
+import {
+	EmailJs_SERVICE_ID,
+	EmailJs_PUBLIC_KEY,
+	EmailJs_TEMPLATE_ID
+} from './lib/common/constants';
 
 // Initializations:
 const worker = /** @type {ServiceWorkerGlobalScope} */ (/** @type {unknown} */ (self));
@@ -97,10 +101,10 @@ async function syncFeedback() {
 		for (const feedback of feedbacks) {
 			try {
 				emailjs.init({
-					publicKey: PUBLIC_KEY
+					publicKey: EmailJs_PUBLIC_KEY
 				});
 
-				await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
+				await emailjs.send(EmailJs_SERVICE_ID, EmailJs_TEMPLATE_ID, {
 					name: feedback.name,
 					email: feedback.email,
 					message: feedback.message,
