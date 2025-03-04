@@ -1,38 +1,7 @@
 <script lang="ts">
-	import type { Team } from '$lib/main/classes.svelte';
 	import { game } from '$lib/main/game.svelte';
 
 	// todo: remove, of course.
-	const teams: Team[] = [
-		{
-			name: 'Henry',
-			wins: 3,
-			draws: 1,
-			losses: 0,
-			currentStreak: 2
-		},
-		{
-			name: 'Dapo',
-			wins: 1,
-			draws: 0,
-			losses: 3,
-			currentStreak: 0
-		},
-		{
-			name: 'Gbaye',
-			wins: 3,
-			draws: 1,
-			losses: 0,
-			currentStreak: 3
-		},
-		{
-			name: 'Nessa',
-			wins: 1,
-			draws: 0,
-			losses: 3,
-			currentStreak: 0
-		}
-	];
 
 	// Calculate points (3 for win, 1 for draw)
 	function calculatePoints(wins: number, draws: number): number {
@@ -56,7 +25,7 @@
 
 	// Sort teams by points (descending), then by wins (descending)
 	let sortedTeams = $derived(
-		teams.sort((a, b) => {
+		getAllTeams().sort((a, b) => {
 			const pointsA = calculatePoints(a.wins, a.draws);
 			const pointsB = calculatePoints(b.wins, b.draws);
 
@@ -115,7 +84,7 @@
 		border-radius: 4px;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	}
-	
+
 	h2 {
 		margin: 0 0;
 		font-size: 1.2rem;
