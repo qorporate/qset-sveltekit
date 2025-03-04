@@ -36,6 +36,12 @@
 			return b.currentStreak - a.currentStreak;
 		})
 	);
+
+	// todo:
+	// review table style
+	// fix bug with up next animation trapped inside container
+	// review design of league table page
+	// understand swipeable container component implementation
 </script>
 
 <div class="league-table">
