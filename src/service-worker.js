@@ -78,8 +78,8 @@ worker.addEventListener('fetch', (event) => {
 });
 
 worker.addEventListener('message', (event) => {
-	console.debug('Received message', event.type);
-	if (event.data && event.type === 'SKIP_WAIT') {
+	console.debug('Received message', event.data.type);
+	if (event.data && event.data.type === 'SKIP_WAIT') {
 		worker.skipWaiting();
 	}
 });
