@@ -81,7 +81,12 @@ export class TimerManager {
 
 		if (remainingTime <= 0) {
 			this.pauseTimer();
-			showNonDismissibleSuccessToast("Time's up!");
+			clearInterval(this.intervalId!);
+
+			// Only show non-dismissible toast when page is visible
+			if (!document.hidden) {
+				showNonDismissibleSuccessToast("Time's up!");
+			}
 		}
 	}
 
@@ -125,10 +130,16 @@ export class TimerManager {
 				// page is visible again, update remaining time
 				this.updateRemainingTime();
 
+				// Check if timer completed while page was hidden
+				if (this.remainingSeconds <= 0) {
+					this.pauseTimer();
+					return;
+				}
+
 				// restart interval updates
 				this.intervalId = setInterval(() => {
 					this.updateRemainingTime();
-				}, 250);
+				}, 250) as unknown as number;
 			}
 		}
 	}
