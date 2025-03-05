@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { Slot } from '$lib/common/enums';
 	import { formatTeamStats, editTeamName } from '$lib/common/util';
-	import { Team } from '$lib/main/classes.svelte';
-	import { game } from '$lib/main/game.svelte';
+	import { game, Team } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
 	interface Props {
