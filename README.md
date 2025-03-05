@@ -13,21 +13,21 @@ Manage sets when playing sports. Add as many teams as you'd like. Built with Sve
 
 1. Clone the repository
 
- ```bash
- git clone https://github.com/qorporate/qset-sveltekit.git
- ```
+```bash
+git clone https://github.com/qorporate/qset-sveltekit.git
+```
 
 2. Install dependencies
 
- ```bash
- bun install
- ```
+```bash
+bun install
+```
 
 3. Start the development server
 
- ```bash
-  bun run dev --open
- ```
+```bash
+ bun run dev --open
+```
 
 ## Deployment
 
