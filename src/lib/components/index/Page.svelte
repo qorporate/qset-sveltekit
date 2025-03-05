@@ -1,12 +1,16 @@
 <script lang="ts">
-	import LeagueTable from './table-page/LeagueTable.svelte';
+	import type { Snippet } from 'svelte';
 
-	// Props
-	let { isActive } = $props();
+	interface Props {
+		isActive: boolean;
+		children: Snippet;
+	}
+
+	let { isActive, children }: Props = $props();
 </script>
 
-<div class="page {isActive ? 'active' : 'hidden'} ">
-	<LeagueTable />
+<div class="page {isActive ? 'active' : 'hidden'}">
+	{@render children()}
 </div>
 
 <style>

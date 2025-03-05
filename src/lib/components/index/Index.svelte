@@ -4,8 +4,14 @@
 	import { onMount } from 'svelte';
 
 	import PageNavigation from './PageNavigation.svelte';
-	import GamePage from './GamePage.svelte';
-	import LeagueTablePage from './LeaguePage.svelte';
+	import Page from './Page.svelte';
+	import MatchDisplay from './game-page/MatchDisplay.svelte';
+	import QueueDisplay from './game-page/QueueDisplay.svelte';
+	import Reset from './game-page/Reset.svelte';
+	import TeamManagement from './game-page/TeamManagement.svelte';
+	import TimeSelector from './game-page/TimeSelector.svelte';
+	import UndoRedo from './game-page/UndoRedo.svelte';
+	import LeagueTable from './table-page/LeagueTable.svelte';
 
 	let pageWrapper: HTMLElement;
 	let maxHeight = 0;
@@ -90,8 +96,18 @@
 
 	<PageNavigation {currentPage} {totalPages} {goToPage} {goToNextPage} {goToPreviousPage} />
 
-	<GamePage isActive={currentPage === 0} />
-	<LeagueTablePage isActive={currentPage === 1} />
+	<Page isActive={currentPage === 0}>
+		<UndoRedo />
+		<MatchDisplay />
+		<TimeSelector />
+		<QueueDisplay />
+		<TeamManagement />
+		<Reset />
+	</Page>
+
+	<Page isActive={currentPage === 1}>
+		<LeagueTable />
+	</Page>
 </div>
 
 <style>
