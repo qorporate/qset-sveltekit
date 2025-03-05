@@ -129,14 +129,8 @@
 		{goToPreviousPage}
 	/>
 
-	<GamePage isActive={currentPage === 0} {isTransitioning} {transitionDirection} {currentPage} />
-
-	<LeagueTablePage
-		isActive={currentPage === 1}
-		{isTransitioning}
-		{transitionDirection}
-		{currentPage}
-	/>
+	<GamePage isActive={currentPage === 0} />
+	<LeagueTablePage isActive={currentPage === 1} />
 </div>
 
 <style>
@@ -144,16 +138,5 @@
 		width: 100%;
 		position: relative;
 		transition: min-height 0.3s ease;
-	}
-
-	@keyframes slideInLeft {
-		from {
-			transform: translateX(100%);
-			visibility: visible;
-		}
-		to {
-			transform: translateX(0);
-			visibility: visible;
-		}
 	}
 </style>

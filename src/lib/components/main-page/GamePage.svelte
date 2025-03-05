@@ -7,18 +7,10 @@
 	import Reset from './Reset.svelte';
 
 	// Props
-	let { isActive, isTransitioning, transitionDirection, currentPage } = $props();
+	let { isActive } = $props();
 </script>
 
-<div
-	class="page {isActive ? 'active' : 'hidden'} 
-    {isTransitioning && currentPage === 1 && transitionDirection === 'right'
-		? 'slide-in-right'
-		: ''} 
-    {isTransitioning && currentPage === 0 && transitionDirection === 'left'
-		? 'slide-out-left'
-		: ''}"
->
+<div class="page {isActive ? 'active' : 'hidden'} ">
 	<UndoRedo />
 	<MatchDisplay />
 	<TimeSelector />
@@ -48,36 +40,5 @@
 		opacity: 0;
 		position: absolute;
 		pointer-events: none;
-	}
-
-	/* Transition animations */
-	.slide-in-right {
-		animation: slideInRight 0.3s forwards;
-	}
-
-	.slide-out-left {
-		animation: slideOutLeft 0.3s forwards;
-	}
-
-	@keyframes slideInRight {
-		from {
-			transform: translateX(-100%);
-			visibility: visible;
-		}
-		to {
-			transform: translateX(0);
-			visibility: visible;
-		}
-	}
-
-	@keyframes slideOutLeft {
-		from {
-			transform: translateX(0);
-			visibility: visible;
-		}
-		to {
-			transform: translateX(-100%);
-			visibility: hidden;
-		}
 	}
 </style>
