@@ -17,31 +17,54 @@
 
 	let currentPage = $state(0);
 	let totalPages = $state(0);
-	let container: HTMLElement;
-
-	// plan
-	// add swipeable event handler
-	// when swiped, check what direction, and display the appropriate page
-	// by default, display the main game view
-	// when swiped right, display the league table
+	let isTransitioning = $state(false);
+	let transitionDirection = $state('');
 
 	function goToNextPage() {
-		console.log('next');
-		if (currentPage < totalPages - 1) {
-			currentPage++;
+		if (currentPage < totalPages - 1 && !isTransitioning) {
+			transitionDirection = 'left';
+			isTransitioning = true;
+
+			// Start transition animation
+			setTimeout(() => {
+				currentPage++;
+				// End transition animation
+				setTimeout(() => {
+					isTransitioning = false;
+				}, 300);
+			}, 10);
 		}
 	}
 
 	function goToPreviousPage() {
-		console.log('previous');
-		if (currentPage > 0) {
-			currentPage--;
+		if (currentPage > 0 && !isTransitioning) {
+			transitionDirection = 'right';
+			isTransitioning = true;
+
+			// Start transition animation
+			setTimeout(() => {
+				currentPage--;
+				// End transition animation
+				setTimeout(() => {
+					isTransitioning = false;
+				}, 300);
+			}, 10);
 		}
 	}
 
 	function goToPage(pageIndex: number) {
-		if (pageIndex >= 0 && pageIndex < totalPages) {
-			currentPage = pageIndex;
+		if (pageIndex >= 0 && pageIndex < totalPages && !isTransitioning) {
+			transitionDirection = pageIndex > currentPage ? 'left' : 'right';
+			isTransitioning = true;
+
+			// Start transition animation
+			setTimeout(() => {
+				currentPage = pageIndex;
+				// End transition animation
+				setTimeout(() => {
+					isTransitioning = false;
+				}, 300);
+			}, 10);
 		}
 	}
 </script>
@@ -51,7 +74,7 @@
 	use:swipeable
 	on:swipedleft={goToNextPage}
 	on:swipedright={goToPreviousPage}
-	class="page-container-wrapper"
+	class="page-wrapper"
 >
 	<Nav page="home" />
 
@@ -59,7 +82,7 @@
 		<button
 			class="nav-arrow left"
 			on:click={goToPreviousPage}
-			disabled={currentPage === 0}
+			disabled={currentPage === 0 || isTransitioning}
 			aria-label="Previous page"
 		>
 			<i class="fas fa-chevron-left"></i>
@@ -79,52 +102,123 @@
 		<button
 			class="nav-arrow right"
 			on:click={goToNextPage}
-			disabled={currentPage === totalPages - 1}
+			disabled={currentPage === totalPages - 1 || isTransitioning}
 			aria-label="Next page"
 		>
 			<i class="fas fa-chevron-right"></i>
 		</button>
 	</div>
 
+	<!-- Page 1: Main Game View -->
 	<div
-		bind:this={container}
-		class="page-container"
-		style="transform: translateX(-{currentPage * 100}%)"
+		class="page {currentPage === 0 ? 'active' : 'hidden'} 
+			{isTransitioning && currentPage === 1 && transitionDirection === 'right' ? 'slide-in-right' : ''} 
+			{isTransitioning && currentPage === 0 && transitionDirection === 'left' ? 'slide-out-left' : ''}"
 	>
-		<!-- Page 1: Main Game View -->
-		<div class="page">
-			<UndoRedo />
-			<MatchDisplay />
-			<TimeSelector />
-			<QueueDisplay />
-			<TeamManagement />
-			<Reset />
-		</div>
+		<UndoRedo />
+		<MatchDisplay />
+		<TimeSelector />
+		<QueueDisplay />
+		<TeamManagement />
+		<Reset />
+	</div>
 
-		<!-- Page 2: League Table -->
-		<div class="page">
-			<LeagueTable />
-		</div>
+	<!-- Page 2: League Table -->
+	<div
+		class="page {currentPage === 1 ? 'active' : 'hidden'} 
+			{isTransitioning && currentPage === 0 && transitionDirection === 'left' ? 'slide-in-left' : ''} 
+			{isTransitioning && currentPage === 1 && transitionDirection === 'right' ? 'slide-out-right' : ''}"
+	>
+		<LeagueTable />
 	</div>
 </div>
 
 <style>
-	.page-container-wrapper {
+	.page-wrapper {
 		width: 100%;
-		overflow: hidden;
 		position: relative;
 	}
 
-	.page-container {
-		display: flex;
-		transition: transform 0.3s ease;
+	.page {
 		width: 100%;
-		touch-action: pan-y;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
 	}
 
-	.page {
-		min-width: 100%;
-		flex-shrink: 0;
+	.page.active {
+		position: relative;
+		visibility: visible;
+		opacity: 1;
+	}
+
+	.page.hidden {
+		visibility: hidden;
+		opacity: 0;
+		position: absolute;
+		pointer-events: none;
+	}
+
+	/* Transition animations */
+	.slide-in-left {
+		animation: slideInLeft 0.3s forwards;
+	}
+
+	.slide-out-left {
+		animation: slideOutLeft 0.3s forwards;
+	}
+
+	.slide-in-right {
+		animation: slideInRight 0.3s forwards;
+	}
+
+	.slide-out-right {
+		animation: slideOutRight 0.3s forwards;
+	}
+
+	@keyframes slideInLeft {
+		from {
+			transform: translateX(100%);
+			visibility: visible;
+		}
+		to {
+			transform: translateX(0);
+			visibility: visible;
+		}
+	}
+
+	@keyframes slideOutLeft {
+		from {
+			transform: translateX(0);
+			visibility: visible;
+		}
+		to {
+			transform: translateX(-100%);
+			visibility: hidden;
+		}
+	}
+
+	@keyframes slideInRight {
+		from {
+			transform: translateX(-100%);
+			visibility: visible;
+		}
+		to {
+			transform: translateX(0);
+			visibility: visible;
+		}
+	}
+
+	@keyframes slideOutRight {
+		from {
+			transform: translateX(0);
+			visibility: visible;
+		}
+		to {
+			transform: translateX(100%);
+			visibility: hidden;
+		}
 	}
 
 	.navigation-controls {
@@ -133,6 +227,8 @@
 		align-items: center;
 		margin: 10px 0;
 		gap: 15px;
+		position: relative;
+		z-index: 10;
 	}
 
 	.nav-arrow {
