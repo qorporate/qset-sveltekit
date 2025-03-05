@@ -32,15 +32,16 @@
 		isSwiping = true;
 	}
 
-	function handleTouchMove(e: TouchEvent) {
-		if (!isSwiping) return;
-
-		// Prevent default to stop scrolling
-		e.preventDefault();
+	function handleTouchMove(_e: TouchEvent) {
+		if (!isSwiping) {
+			return;
+		}
 	}
 
 	function handleTouchEnd(e: TouchEvent) {
-		if (!isSwiping) return;
+		if (!isSwiping) {
+			return;
+		}
 
 		const endX = e.changedTouches[0].clientX;
 		const diffX = endX - startX;
