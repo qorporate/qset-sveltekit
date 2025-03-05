@@ -109,6 +109,7 @@
 	.team-name {
 		text-align: left;
 		min-width: 100px;
+		font-weight: bold;
 	}
 
 	.points {
