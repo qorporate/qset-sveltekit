@@ -14,7 +14,8 @@
 	// Derived value to determine whether to show time selection buttons
 	const shouldShowTimeOptions = $derived(
 		!isTimerRunning &&
-			(timerRemainingSeconds === 0 || timerRemainingSeconds === timerManager.selectedTimeInMinutes * 60)
+			(timerRemainingSeconds === 0 ||
+				timerRemainingSeconds === timerManager.selectedTimeInMinutes * 60)
 	);
 
 	const hasNoTimeSet = $derived(timerRemainingSeconds === 0);
