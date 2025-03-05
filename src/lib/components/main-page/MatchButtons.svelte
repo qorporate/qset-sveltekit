@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { MatchResult } from '$lib/common/enums';
-	import { Team } from '$lib/main/classes.svelte';
-	import { game } from '$lib/main/game.svelte';
+	import { game, Team } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
 	interface Props {

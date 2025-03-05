@@ -1,4 +1,4 @@
-import type { Game, Team } from '$lib/main/classes.svelte';
+import type { Game, Team } from '$lib/main/game.svelte';
 import { showErrorToast } from './my-toasts';
 
 export function editTeamName(game: Game, oldTeamName: string): void {

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { editTeamName } from '$lib/common/util';
-	import { Team } from '$lib/main/classes.svelte';
-	import { game } from '$lib/main/game.svelte';
+	import { game, Team } from '$lib/main/game.svelte';
 	import ActionButton from './ActionButton.svelte';
 	import QueueTeamStats from './QueueTeamStats.svelte';
 

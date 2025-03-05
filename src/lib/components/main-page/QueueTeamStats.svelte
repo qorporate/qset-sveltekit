@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formatTeamStats } from '$lib/common/util';
-	import { Team } from '$lib/main/classes.svelte';
+	import { Team } from '$lib/main/game.svelte';
 
 	interface Props {
 		team: Team;
