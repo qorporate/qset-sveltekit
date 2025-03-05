@@ -44,7 +44,7 @@
 			<table>
 				<thead>
 					<tr>
-						<th>Pos</th>
+						<th>#</th>
 						<th class="team-name">Team</th>
 						<th>P</th>
 						<th class="win">W</th>
@@ -129,7 +129,7 @@
 
 	.team-name {
 		text-align: left;
-		min-width: 100px;
+		min-width: 50px;
 		font-weight: bold;
 	}
 
