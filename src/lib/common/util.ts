@@ -35,10 +35,6 @@ export function editTeamName(game: Game, oldTeamName: string): void {
 	);
 }
 
-export function formatTeamStats(team: Team): string {
-	return `${team.wins}W | ${team.draws}D | ${team.losses}L`;
-}
-
 export function deepCopyTeam(team: Team | null): Team | null {
 	if (!team) {
 		return null;

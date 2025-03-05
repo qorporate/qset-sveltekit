@@ -2,7 +2,6 @@
 	import { editTeamName } from '$lib/common/util';
 	import { game, Team } from '$lib/main/game.svelte';
 	import ActionButton from './ActionButton.svelte';
-	import QueueTeamStats from './QueueTeamStats.svelte';
 
 	interface Props {
 		team: Team;
@@ -14,7 +13,9 @@
 </script>
 
 <div class="queue-item {index === 0 ? 'next-up' : ''}">
-	<QueueTeamStats {team} />
+	<span class="team-info">
+		<b>{team.name}</b>
+	</span>
 
 	<div class="queue-item-buttons">
 		<ActionButton
@@ -60,6 +61,10 @@
 	.queue-item-buttons {
 		display: flex;
 		gap: 5px;
+	}
+
+	.team-info {
+		font-size: 0.95rem;
 	}
 
 	/* Highlight the first team in the queue */

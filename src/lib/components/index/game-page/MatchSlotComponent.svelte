@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Slot } from '$lib/common/enums';
-	import { formatTeamStats, editTeamName } from '$lib/common/util';
+	import { editTeamName } from '$lib/common/util';
 	import { game, Team } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
@@ -20,9 +20,8 @@
 
 <div class="team">
 	<h2>{team.name}</h2>
-	<em><span class="stats">{formatTeamStats(team)}</span></em>
 	<p class="streak">
-		Streak: <span>{team.currentStreak}</span>
+		<em><span>{team.currentStreak}</span> <i class="fa fa-fire" aria-hidden="true"></i></em>
 	</p>
 
 	<button
@@ -49,11 +48,7 @@
 	}
 
 	.team h2 {
-		font-size: 0.8rem;
-	}
-
-	.team .stats {
-		font-size: 0.8rem;
+		font-size: 1rem;
 	}
 
 	.match-team-button {
@@ -80,7 +75,7 @@
 	}
 
 	.streak {
-		font-size: 0.8rem;
+		font-size: 0.9rem;
 		color: #666;
 		margin: 5px;
 	}
