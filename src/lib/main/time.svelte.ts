@@ -1,12 +1,13 @@
 import { browser } from '$app/environment';
-import { LOCAL_STORAGE_ITEM_SelectedTime } from '$lib/common/constants';
+import {
+	LOCAL_STORAGE_ITEM_SelectedTime,
+	LOCAL_STORAGE_ITEM_RemainingSeconds,
+	LOCAL_STORAGE_ITEM_EndTime
+} from '$lib/common/constants';
 import { showNonDismissibleSuccessToast } from '$lib/common/my-toasts';
 
 const DEFAULT_TIME_IN_MINUTES = 0;
 
-// As it stands, if the page is refreshed we don't store the state of the timer, 
-// instead it would show the last time they set, and they would need to start afresh. 
-// We could fix it, but i think it's best to wait for *feedback*.
 export class TimerManager {
 	selectedTimeInMinutes = $state(DEFAULT_TIME_IN_MINUTES);
 	remainingSeconds = $state(DEFAULT_TIME_IN_MINUTES * 60);
@@ -23,6 +24,18 @@ export class TimerManager {
 		// Add event listener for page visibility change
 		if (browser) {
 			document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+
+			// add event listener for before unload to save state. this will hit on accidental reloads
+			window.addEventListener('beforeunload', () => {
+				if (this.isRunning) {
+					// save the remaining time to localStorage
+					localStorage.setItem(
+						LOCAL_STORAGE_ITEM_RemainingSeconds,
+						this.remainingSeconds.toString()
+					);
+					localStorage.setItem(LOCAL_STORAGE_ITEM_EndTime, this.endTimeInMs?.toString() || '');
+				}
+			});
 		}
 	}
 
@@ -105,14 +118,14 @@ export class TimerManager {
 	handleVisibilityChange() {
 		if (this.isRunning) {
 			if (document.hidden) {
-				// Page is hidden, stop interval and rely on timestamps
+				// page is hidden, stop interval and rely on timestamps
 				clearInterval(this.intervalId!);
 				this.intervalId = null;
 			} else {
-				// Page is visible again, update remaining time
+				// page is visible again, update remaining time
 				this.updateRemainingTime();
 
-				// Restart interval updates
+				// restart interval updates
 				this.intervalId = setInterval(() => {
 					this.updateRemainingTime();
 				}, 250);
@@ -128,9 +141,33 @@ export class TimerManager {
 		if (browser) {
 			const savedTime = localStorage.getItem(LOCAL_STORAGE_ITEM_SelectedTime);
 			if (savedTime) {
-				this.selectedTimeInMinutes = parseInt(savedTime, 10);
-				this.remainingSeconds = this.selectedTimeInMinutes * 60;
+				try {
+					this.selectedTimeInMinutes = parseInt(savedTime, 10);
+					this.remainingSeconds = this.selectedTimeInMinutes * 60;
+
+					// check if there was a running timer when the page was closed
+					const savedEndTime = localStorage.getItem(LOCAL_STORAGE_ITEM_EndTime);
+					if (savedEndTime) {
+						const endTimeInMs = parseInt(savedEndTime, 10);
+						const nowInMs = Date.now();
+
+						// if the end time is in the future, resume the timer
+						if (endTimeInMs > nowInMs) {
+							this.endTimeInMs = endTimeInMs;
+							this.remainingSeconds = Math.ceil((endTimeInMs - nowInMs) / 1000);
+							this.startTimer();
+						}
+
+						// clear the saved end time
+						localStorage.removeItem(LOCAL_STORAGE_ITEM_EndTime);
+						localStorage.removeItem(LOCAL_STORAGE_ITEM_RemainingSeconds);
+					}
+				} catch (error) {
+					console.error('Error loading saved time:', error);
+				}
 			}
+		} else {
+			console.debug("Can't load time. Not on browser yet.");
 		}
 	}
 }
