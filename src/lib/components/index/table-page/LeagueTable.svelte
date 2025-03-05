@@ -57,11 +57,11 @@
 				<tbody>
 					{#each sortedTeams as team, index}
 						<tr>
-							<td>{index + 1}</td>
-							<td class="team-name"
-								>{team.name}
+							<td>
 								{#if index === 0}
-									<i class="fa fa-trophy" aria-hidden="true"></i>
+									<i class="fa fa-trophy" id="trophy" aria-hidden="true"></i>
+								{:else}
+									{index + 1}
 								{/if}
 							</td>
 							<td>{team.wins + team.draws + team.losses}</td>
@@ -133,9 +133,8 @@
 		font-weight: bold;
 	}
 
-	.team-name .fa {
+	#trophy {
 		color: gold;
-		margin-left: 3px;
 	}
 
 	.points {
