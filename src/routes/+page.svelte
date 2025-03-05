@@ -1,5 +1,5 @@
 <script>
-	import Index from '$lib/components/main-page/Index.svelte';
+	import Index from '$lib/components/index/Index.svelte';
 
 	const SITE_URL = 'https://qset.qballxi.com';
 	const DESCRIPTION = "Manage sets when playing sports. Add as many teams as you'd like.";
