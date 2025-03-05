@@ -10,10 +10,54 @@
 	import UndoRedo from './UndoRedo.svelte';
 	import { onMount } from 'svelte';
 
+	let pageWrapper: HTMLElement;
+	let maxHeight = 0;
+
 	onMount(() => {
 		// Count the number of pages
 		totalPages = document.querySelectorAll('.page').length;
+
+		// Calculate the max height after initial render
+		setTimeout(updateMaxHeight, 100);
+
+		// Update max height on window resize
+		window.addEventListener('resize', updateMaxHeight);
+
+		return () => {
+			window.removeEventListener('resize', updateMaxHeight);
+		};
 	});
+
+	function updateMaxHeight() {
+		// Make all pages temporarily visible but not in the flow
+		const pages = document.querySelectorAll('.page');
+		pages.forEach((page) => {
+			(page as HTMLElement).style.visibility = 'hidden';
+			(page as HTMLElement).style.position = 'absolute';
+			(page as HTMLElement).style.display = 'block';
+		});
+
+		// Measure each page
+		maxHeight = 0;
+		pages.forEach((page) => {
+			const height = (page as HTMLElement).offsetHeight;
+			if (height > maxHeight) {
+				maxHeight = height;
+			}
+		});
+
+		// Reset visibility
+		pages.forEach((page) => {
+			(page as HTMLElement).style.visibility = '';
+			(page as HTMLElement).style.position = '';
+			(page as HTMLElement).style.display = '';
+		});
+
+		// Apply the max height to the wrapper
+		if (pageWrapper && maxHeight > 0) {
+			pageWrapper.style.minHeight = `${maxHeight}px`;
+		}
+	}
 
 	let currentPage = $state(0);
 	let totalPages = $state(0);
@@ -71,6 +115,7 @@
 
 <!-- svelte-ignore event_directive_deprecated : the 'modern' ones don't work :/ -->
 <div
+	bind:this={pageWrapper}
 	use:swipeable
 	on:swipedleft={goToNextPage}
 	on:swipedright={goToPreviousPage}
@@ -137,6 +182,7 @@
 	.page-wrapper {
 		width: 100%;
 		position: relative;
+		transition: min-height 0.3s ease;
 	}
 
 	.page {
@@ -151,6 +197,7 @@
 		position: relative;
 		visibility: visible;
 		opacity: 1;
+		width: 100%;
 	}
 
 	.page.hidden {
