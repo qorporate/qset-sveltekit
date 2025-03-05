@@ -4,6 +4,9 @@ import { showNonDismissibleSuccessToast } from '$lib/common/my-toasts';
 
 const DEFAULT_TIME_IN_MINUTES = 0;
 
+// As it stands, if the page is refreshed we don't store the state of the timer, 
+// instead it would show the last time they set, and they would need to start afresh. 
+// We could fix it, but i think it's best to wait for *feedback*.
 export class TimerManager {
 	selectedTimeInMinutes = $state(DEFAULT_TIME_IN_MINUTES);
 	remainingSeconds = $state(DEFAULT_TIME_IN_MINUTES * 60);
