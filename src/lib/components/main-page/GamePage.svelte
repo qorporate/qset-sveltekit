@@ -1,10 +1,10 @@
 <script lang="ts">
-	import UndoRedo from './UndoRedo.svelte';
-	import MatchDisplay from './MatchDisplay.svelte';
-	import TimeSelector from './TimeSelector.svelte';
-	import QueueDisplay from './QueueDisplay.svelte';
-	import TeamManagement from './TeamManagement.svelte';
-	import Reset from './Reset.svelte';
+	import UndoRedo from './game-page/UndoRedo.svelte';
+	import MatchDisplay from './game-page/MatchDisplay.svelte';
+	import TimeSelector from './game-page/TimeSelector.svelte';
+	import QueueDisplay from './game-page/QueueDisplay.svelte';
+	import TeamManagement from './game-page/TeamManagement.svelte';
+	import Reset from './game-page/Reset.svelte';
 
 	// Props
 	let { isActive } = $props();

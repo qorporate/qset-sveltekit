@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LeagueTable from './LeagueTable.svelte';
+	import LeagueTable from './table-page/LeagueTable.svelte';
 
 	// Props
 	let { isActive } = $props();
