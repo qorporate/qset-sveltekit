@@ -5,19 +5,23 @@ import { showNonDismissibleSuccessToast } from '$lib/common/my-toasts';
 const DEFAULT_TIME_IN_MINUTES = 0;
 
 export class TimerManager {
-	selectedTime = $state(DEFAULT_TIME_IN_MINUTES);
-    remainingSeconds = $state(DEFAULT_TIME_IN_MINUTES * 60);
-    isRunning = $state(false);
-    
-    // Track precise start and remaining time
-    private startTime = 0;
-	private pausedTime = 0;
-    private animationFrameId: number | null = null;
+	selectedTimeInMinutes = $state(DEFAULT_TIME_IN_MINUTES);
+	remainingSeconds = $state(DEFAULT_TIME_IN_MINUTES * 60);
 
-    constructor() {
-        this.loadSavedTime();
-    }
+	startTimeInMs: number | null = $state(null);
+	endTimeInMs: number | null = $state(null);
 
+	isRunning = $state(false);
+	intervalId: number | null = $state(null);
+
+	constructor() {
+		this.loadSavedTime();
+
+		// Add event listener for page visibility change
+		if (browser) {
+			document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+		}
+	}
 
 	get formattedTime() {
 		const minutes = Math.floor(this.remainingSeconds / 60);
@@ -27,92 +31,104 @@ export class TimerManager {
 
 	setTime(minutes: number) {
 		this.pauseTimer();
-		this.selectedTime = minutes;
+		this.selectedTimeInMinutes = minutes;
 		this.remainingSeconds = minutes * 60;
 		this.saveTime();
 	}
 
 	startTimer() {
 		if (!this.isRunning && this.remainingSeconds > 0) {
-			// If timer was paused, adjust start time
-			if (this.pausedTime > 0) {
-				// Adjust start time to account for pause duration
-				const pauseDuration = Date.now() - this.pausedTime;
-				this.startTime += pauseDuration;
-				this.pausedTime = 0;
-			} else {
-				// Fresh start
-				this.startTime = Date.now();
-			}
-	
 			this.isRunning = true;
-			this.tick();
+			this.startTimeInMs = Date.now();
+			this.endTimeInMs = this.startTimeInMs + this.remainingSeconds * 1000;
+
+			// Clear any existing interval
+			if (this.intervalId) {
+				clearInterval(this.intervalId);
+			}
+
+			this.intervalId = setInterval(() => {
+				this.updateRemainingTime();
+			}, 250) as unknown as number; // More frequent updates for responsiveness
 		}
 	}
 
-	private tick() {
-        if (!this.isRunning) return;
+	updateRemainingTime() {
+		if (!this.endTimeInMs) {
+			return;
+		}
 
-        const currentTime = Date.now();
-        const elapsedTime = Math.floor((currentTime - this.startTime) / 1000);
-        this.remainingSeconds = Math.max(this.selectedTime * 60 - elapsedTime, 0);
+		const currentTime = Date.now();
+		const remainingTime = Math.max(0, Math.ceil((this.endTimeInMs - currentTime) / 1000));
 
-        if (this.remainingSeconds > 0) {
-            // Use requestAnimationFrame for more precise timing
-            this.animationFrameId = requestAnimationFrame(() => this.tick());
-        } else {
-            this.pauseTimer();
-            showNonDismissibleSuccessToast("Time's up!");
-        }
-    }
+		this.remainingSeconds = remainingTime;
+
+		if (remainingTime <= 0) {
+			this.pauseTimer();
+			showNonDismissibleSuccessToast("Time's up!");
+		}
+	}
 
 	pauseTimer() {
 		if (this.isRunning) {
-            // Cancel animation frame
-            if (this.animationFrameId) {
-                cancelAnimationFrame(this.animationFrameId);
-                this.animationFrameId = null;
-            }
-            
-            // Record the pause time
-            this.pausedTime = Date.now();
-            
-            // Update remaining time precisely
-            const currentTime = Date.now();
-            const elapsedTime = Math.floor((currentTime - this.startTime) / 1000);
-            this.remainingSeconds = Math.max(this.selectedTime * 60 - elapsedTime, 0);
-            
-            this.isRunning = false;
-        }
+			clearInterval(this.intervalId!);
+			this.intervalId = null;
+			this.isRunning = false;
+
+			// Recalculate remaining time when pausing
+			if (this.endTimeInMs && this.startTimeInMs) {
+				const currentTime = Date.now();
+				this.remainingSeconds = Math.max(0, Math.ceil((this.endTimeInMs - currentTime) / 1000));
+			}
+		}
 	}
 
 	resumeTimer() {
-		this.startTimer();
+		if (!this.isRunning && this.remainingSeconds > 0) {
+			this.startTimeInMs = Date.now();
+			this.endTimeInMs = this.startTimeInMs + this.remainingSeconds * 1000;
+			this.startTimer();
+		}
 	}
 
 	resetTimer() {
 		this.pauseTimer();
-    this.remainingSeconds = this.selectedTime * 60;
-    this.startTime = 0;
-    this.pausedTime = 0;
+		this.remainingSeconds = this.selectedTimeInMinutes * 60;
+		this.startTimeInMs = null;
+		this.endTimeInMs = null;
+	}
+
+	// Handle page visibility changes to ensure accurate timing
+	handleVisibilityChange() {
+		if (this.isRunning) {
+			if (document.hidden) {
+				// Page is hidden, stop interval and rely on timestamps
+				clearInterval(this.intervalId!);
+				this.intervalId = null;
+			} else {
+				// Page is visible again, update remaining time
+				this.updateRemainingTime();
+
+				// Restart interval updates
+				this.intervalId = setInterval(() => {
+					this.updateRemainingTime();
+				}, 250);
+			}
+		}
 	}
 
 	saveTime() {
-		localStorage.setItem(LOCAL_STORAGE_ITEM_SelectedTime, this.selectedTime.toString());
+		localStorage.setItem(LOCAL_STORAGE_ITEM_SelectedTime, this.selectedTimeInMinutes.toString());
 	}
 
 	loadSavedTime() {
 		if (browser) {
-            const savedTime = localStorage.getItem(LOCAL_STORAGE_ITEM_SelectedTime);
-            if (savedTime) {
-                try {
-                    this.selectedTime = parseInt(savedTime, 10);
-                    this.remainingSeconds = this.selectedTime * 60;
-                } catch (error) {
-                    console.error('Error loading saved time:', error);
-                }
-            }
-        }	console.debug("Can't load time. Not on browser yet.");
+			const savedTime = localStorage.getItem(LOCAL_STORAGE_ITEM_SelectedTime);
+			if (savedTime) {
+				this.selectedTimeInMinutes = parseInt(savedTime, 10);
+				this.remainingSeconds = this.selectedTimeInMinutes * 60;
+			}
+		}
 	}
 }
 
