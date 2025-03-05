@@ -1,5 +1,5 @@
 <script>
-	import PageContent from '$lib/components/main-page/PageContent.svelte';
+	import Index from '$lib/components/main-page/Index.svelte';
 
 	const SITE_URL = 'https://qset.qballxi.com';
 	const DESCRIPTION = "Manage sets when playing sports. Add as many teams as you'd like.";
@@ -18,5 +18,5 @@
 </svelte:head>
 
 <main class="container">
-	<PageContent />
+	<Index />
 </main>
