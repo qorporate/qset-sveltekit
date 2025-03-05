@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { swipeable } from '@react2svelte/swipeable';
-	import Nav from '../Nav.svelte';
 	import { onMount } from 'svelte';
-
+	
+	import Nav from '../Nav.svelte';
 	import PageNavigation from './PageNavigation.svelte';
 	import Page from './Page.svelte';
 	import MatchDisplay from './game-page/MatchDisplay.svelte';
