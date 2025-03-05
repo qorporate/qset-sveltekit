@@ -6,13 +6,18 @@ const DEFAULT_TIME_IN_MINUTES = 0;
 
 export class TimerManager {
 	selectedTime = $state(DEFAULT_TIME_IN_MINUTES);
-	remainingSeconds = $state(DEFAULT_TIME_IN_MINUTES * 60);
-	isRunning = $state(false);
-	intervalId: number | null = $state(null);
+    remainingSeconds = $state(DEFAULT_TIME_IN_MINUTES * 60);
+    isRunning = $state(false);
+    
+    // Track precise start and remaining time
+    private startTime = 0;
+	private pausedTime = 0;
+    private animationFrameId: number | null = null;
 
-	constructor() {
-		this.loadSavedTime();
-	}
+    constructor() {
+        this.loadSavedTime();
+    }
+
 
 	get formattedTime() {
 		const minutes = Math.floor(this.remainingSeconds / 60);
@@ -29,24 +34,56 @@ export class TimerManager {
 
 	startTimer() {
 		if (!this.isRunning && this.remainingSeconds > 0) {
+			// If timer was paused, adjust start time
+			if (this.pausedTime > 0) {
+				// Adjust start time to account for pause duration
+				const pauseDuration = Date.now() - this.pausedTime;
+				this.startTime += pauseDuration;
+				this.pausedTime = 0;
+			} else {
+				// Fresh start
+				this.startTime = Date.now();
+			}
+	
 			this.isRunning = true;
-			this.intervalId = setInterval(() => {
-				if (this.remainingSeconds > 0) {
-					this.remainingSeconds--;
-				} else {
-					this.pauseTimer();
-					showNonDismissibleSuccessToast("Time's up!");
-				}
-			}, 1000) as unknown as number;
+			this.tick();
 		}
 	}
 
+	private tick() {
+        if (!this.isRunning) return;
+
+        const currentTime = Date.now();
+        const elapsedTime = Math.floor((currentTime - this.startTime) / 1000);
+        this.remainingSeconds = Math.max(this.selectedTime * 60 - elapsedTime, 0);
+
+        if (this.remainingSeconds > 0) {
+            // Use requestAnimationFrame for more precise timing
+            this.animationFrameId = requestAnimationFrame(() => this.tick());
+        } else {
+            this.pauseTimer();
+            showNonDismissibleSuccessToast("Time's up!");
+        }
+    }
+
 	pauseTimer() {
 		if (this.isRunning) {
-			clearInterval(this.intervalId!);
-			this.intervalId = null;
-			this.isRunning = false;
-		}
+            // Cancel animation frame
+            if (this.animationFrameId) {
+                cancelAnimationFrame(this.animationFrameId);
+                this.animationFrameId = null;
+            }
+            
+            // Record the pause time
+            this.pausedTime = Date.now();
+            
+            // Update remaining time precisely
+            const currentTime = Date.now();
+            const elapsedTime = Math.floor((currentTime - this.startTime) / 1000);
+            this.remainingSeconds = Math.max(this.selectedTime * 60 - elapsedTime, 0);
+            
+            this.isRunning = false;
+        }
 	}
 
 	resumeTimer() {
@@ -55,7 +92,9 @@ export class TimerManager {
 
 	resetTimer() {
 		this.pauseTimer();
-		this.remainingSeconds = this.selectedTime * 60;
+    this.remainingSeconds = this.selectedTime * 60;
+    this.startTime = 0;
+    this.pausedTime = 0;
 	}
 
 	saveTime() {
@@ -64,14 +103,16 @@ export class TimerManager {
 
 	loadSavedTime() {
 		if (browser) {
-			const savedTime = localStorage.getItem(LOCAL_STORAGE_ITEM_SelectedTime);
-			if (savedTime) {
-				this.selectedTime = parseInt(savedTime, 10);
-				this.remainingSeconds = this.selectedTime * 60;
-			}
-		}
-
-		console.debug("Can't load time. Not on browser yet.");
+            const savedTime = localStorage.getItem(LOCAL_STORAGE_ITEM_SelectedTime);
+            if (savedTime) {
+                try {
+                    this.selectedTime = parseInt(savedTime, 10);
+                    this.remainingSeconds = this.selectedTime * 60;
+                } catch (error) {
+                    console.error('Error loading saved time:', error);
+                }
+            }
+        }	console.debug("Can't load time. Not on browser yet.");
 	}
 }
 
