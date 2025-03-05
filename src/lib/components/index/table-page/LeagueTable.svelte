@@ -96,7 +96,7 @@
 	table {
 		width: 100%;
 		border-collapse: collapse;
-		font-size: 0.9rem;
+		font-size: 1rem;
 	}
 
 	th,
