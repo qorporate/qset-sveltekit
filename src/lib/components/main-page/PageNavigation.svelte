@@ -1,14 +1,13 @@
 <script lang="ts">
 	// Props
-	let { currentPage, totalPages, isTransitioning, goToPage, goToNextPage, goToPreviousPage } =
-		$props();
+	let { currentPage, totalPages, goToPage, goToNextPage, goToPreviousPage } = $props();
 </script>
 
 <div class="navigation-controls">
 	<button
 		class="nav-arrow left"
 		onclick={goToPreviousPage}
-		disabled={currentPage === 0 || isTransitioning}
+		disabled={currentPage === 0}
 		aria-label="Previous page"
 	>
 		<i class="fas fa-chevron-left"></i>
@@ -28,7 +27,7 @@
 	<button
 		class="nav-arrow right"
 		onclick={goToNextPage}
-		disabled={currentPage === totalPages - 1 || isTransitioning}
+		disabled={currentPage === totalPages - 1}
 		aria-label="Next page"
 	>
 		<i class="fas fa-chevron-right"></i>

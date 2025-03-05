@@ -12,8 +12,6 @@
 
 	let currentPage = $state(0);
 	let totalPages = $state(0);
-	let isTransitioning = $state(false);
-	let transitionDirection = $state('');
 
 	onMount(() => {
 		// Count the number of pages
@@ -62,50 +60,20 @@
 	}
 
 	function goToNextPage() {
-		if (currentPage < totalPages - 1 && !isTransitioning) {
-			transitionDirection = 'left';
-			isTransitioning = true;
-
-			// Start transition animation
-			setTimeout(() => {
-				currentPage++;
-				// End transition animation
-				setTimeout(() => {
-					isTransitioning = false;
-				}, 300);
-			}, 10);
+		if (currentPage < totalPages - 1) {
+			currentPage++;
 		}
 	}
 
 	function goToPreviousPage() {
-		if (currentPage > 0 && !isTransitioning) {
-			transitionDirection = 'right';
-			isTransitioning = true;
-
-			// Start transition animation
-			setTimeout(() => {
-				currentPage--;
-				// End transition animation
-				setTimeout(() => {
-					isTransitioning = false;
-				}, 300);
-			}, 10);
+		if (currentPage > 0) {
+			currentPage--;
 		}
 	}
 
 	function goToPage(pageIndex: number) {
-		if (pageIndex >= 0 && pageIndex < totalPages && !isTransitioning) {
-			transitionDirection = pageIndex > currentPage ? 'left' : 'right';
-			isTransitioning = true;
-
-			// Start transition animation
-			setTimeout(() => {
-				currentPage = pageIndex;
-				// End transition animation
-				setTimeout(() => {
-					isTransitioning = false;
-				}, 300);
-			}, 10);
+		if (pageIndex >= 0 && pageIndex < totalPages) {
+			currentPage = pageIndex;
 		}
 	}
 </script>
@@ -120,14 +88,7 @@
 >
 	<Nav page="home" />
 
-	<PageNavigation
-		{currentPage}
-		{totalPages}
-		{isTransitioning}
-		{goToPage}
-		{goToNextPage}
-		{goToPreviousPage}
-	/>
+	<PageNavigation {currentPage} {totalPages} {goToPage} {goToNextPage} {goToPreviousPage} />
 
 	<GamePage isActive={currentPage === 0} />
 	<LeagueTablePage isActive={currentPage === 1} />
@@ -137,6 +98,5 @@
 	.page-wrapper {
 		width: 100%;
 		position: relative;
-		transition: min-height 0.3s ease;
 	}
 </style>

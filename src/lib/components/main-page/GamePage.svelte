@@ -30,14 +30,12 @@
 
 	.page.active {
 		position: relative;
-		visibility: visible;
-		opacity: 1;
+		display: block;
 		width: 100%;
 	}
 
 	.page.hidden {
-		visibility: hidden;
-		opacity: 0;
+		display: none;
 		position: absolute;
 		pointer-events: none;
 	}
