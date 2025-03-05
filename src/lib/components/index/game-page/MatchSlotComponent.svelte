@@ -80,6 +80,10 @@
 		margin: 5px;
 	}
 
+	.streak .fa {
+		color: orange;
+	}
+
 	em {
 		font-style: italic;
 		font-weight: bold;

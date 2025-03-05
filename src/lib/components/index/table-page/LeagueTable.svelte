@@ -47,10 +47,10 @@
 						<th>Pos</th>
 						<th class="team-name">Team</th>
 						<th>P</th>
-						<th>W</th>
-						<th>D</th>
-						<th>L</th>
-						<th><i class="fa fa-fire" aria-hidden="true"></i></th>
+						<th class="win">W</th>
+						<th class="draw">D</th>
+						<th class="loss">L</th>
+						<th><i class="fa fa-fire" id="streak-icon" aria-hidden="true"></i></th>
 						<th>Pts</th>
 					</tr>
 				</thead>
@@ -58,11 +58,16 @@
 					{#each sortedTeams as team, index}
 						<tr>
 							<td>{index + 1}</td>
-							<td class="team-name">{team.name}</td>
+							<td class="team-name"
+								>{team.name}
+								{#if index === 0}
+									<i class="fa fa-trophy" aria-hidden="true"></i>
+								{/if}
+							</td>
 							<td>{team.wins + team.draws + team.losses}</td>
-							<td>{team.wins}</td>
-							<td>{team.draws}</td>
-							<td>{team.losses}</td>
+							<td class="win">{team.wins}</td>
+							<td class="draw">{team.draws}</td>
+							<td class="loss">{team.losses}</td>
 							<td>{team.currentStreak}</td>
 							<td class="points">{calculatePoints(team.wins, team.draws)}</td>
 						</tr>
@@ -106,10 +111,31 @@
 		font-weight: bold;
 	}
 
+	#streak-icon {
+		color: orange;
+	}
+
+	.win {
+		color: green;
+	}
+
+	.draw {
+		color: gray;
+	}
+
+	.loss {
+		color: rgb(203, 8, 8);
+	}
+
 	.team-name {
 		text-align: left;
 		min-width: 100px;
 		font-weight: bold;
+	}
+
+	.team-name .fa {
+		color: gold;
+		margin-left: 3px;
 	}
 
 	.points {

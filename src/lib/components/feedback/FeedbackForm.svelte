@@ -169,7 +169,7 @@
 
 		<button type="submit" disabled={isSubmitting} class="submit-button">
 			{#if isSubmitting}
-				<div class="spinner"></div>
+				<i class="fa fa-spinner fa-pulse fa-fw"></i>
 				<span>Sending...</span>
 			{:else}
 				Submit Feedback
@@ -258,25 +258,6 @@
 		border-radius: 5px;
 		background: white;
 		font-size: 0.8rem;
-	}
-
-	.spinner {
-		width: 18px;
-		height: 18px;
-		border: 3px solid transparent;
-		border-top-color: white;
-		border-radius: 50%;
-		animation: spin 1s linear infinite;
-		margin-right: 8px;
-	}
-
-	@keyframes spin {
-		0% {
-			transform: rotate(0deg);
-		}
-		100% {
-			transform: rotate(360deg);
-		}
 	}
 
 	@media (max-width: 450px) {
