@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { game } from '$lib/main/game.svelte';
 
-	// todo: remove, of course.
-
 	// Calculate points (3 for win, 1 for draw)
 	function calculatePoints(wins: number, draws: number): number {
 		return wins * 3 + draws * 1;
@@ -36,17 +34,9 @@
 			return b.currentStreak - a.currentStreak;
 		})
 	);
-
-	// todo:
-	// review table style
-	// fix bug with up next animation trapped inside container
-	// review design of league table page
-	// understand swipeable container component implementation
 </script>
 
 <div class="league-table">
-	<h2>League Table</h2>
-
 	{#if sortedTeams.length === 0}
 		<p class="no-teams">No teams added yet</p>
 	{:else}
@@ -86,15 +76,6 @@
 <style>
 	.league-table {
 		padding: 10px;
-		background-color: white;
-		border-radius: 4px;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-	}
-
-	h2 {
-		margin: 0 0;
-		font-size: 1.2rem;
-		text-align: center;
 	}
 
 	.no-teams {
