@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { truncate } from '$lib/common/util';
 	import { game } from '$lib/main/game.svelte';
 
 	// Calculate points (3 for win, 1 for draw)
@@ -64,6 +65,7 @@
 									{index + 1}
 								{/if}
 							</td>
+							<td class="team-name">{truncate(team.name)} </td>
 							<td>{team.wins + team.draws + team.losses}</td>
 							<td class="win">{team.wins}</td>
 							<td class="draw">{team.draws}</td>

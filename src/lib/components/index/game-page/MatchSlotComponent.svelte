@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Slot } from '$lib/common/enums';
-	import { editTeamName } from '$lib/common/util';
+	import { editTeamName, truncate } from '$lib/common/util';
 	import { game, Team } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
@@ -19,7 +19,7 @@
 </script>
 
 <div class="team">
-	<h2>{team.name}</h2>
+	<h2>{truncate(team.name)}</h2>
 	<p class="streak">
 		<em><span>{team.currentStreak}</span> <i class="fa fa-fire" aria-hidden="true"></i></em>
 	</p>
