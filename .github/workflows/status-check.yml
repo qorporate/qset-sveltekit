@@ -1,11 +1,13 @@
 name: Build
 
+# todo: add testing
+
 on:
   pull_request:
   workflow_dispatch:
 
 jobs:
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
