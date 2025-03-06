@@ -1,14 +1,22 @@
 name: Deploy to Netlify
 
+# This workflow runs when a PR to dev is closed & merged
+# Or when manually triggered.
+
 on:
-  push:
-    branches: 'dev'
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - dev
 
 permissions:
   pull-requests: write
 
 jobs:
   build_and_deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -43,13 +51,16 @@ jobs:
             > deploy_output.json
 
       - name: Get Deploy URL
+        # only needs to run if this was a merged PR
+        if: github.event_name == 'pull_request'
         id: deploy_url
         run: |
-          cat deploy_output.json
           NETLIFY_DEPLOY_URL=$(jq -r '.url' deploy_output.json)
           echo "NETLIFY_DEPLOY_URL=$NETLIFY_DEPLOY_URL" >> "$GITHUB_OUTPUT"
 
       - name: Comment URL on PR
+        # only needs to run if this was a merged PR
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
           NETLIFY_DEPLOY_URL: ${{ steps.url_preview.outputs.NETLIFY_DEPLOY_URL }}
@@ -63,11 +74,9 @@ jobs:
             })
 
             if (!result.data) {
-              console.error("No data found.")
+              console.error("No PRs found.")
               return;
             }
-
-            console.log(result);
 
             const issueNumber = result.data[0].number
             if(issueNumber){
@@ -75,10 +84,11 @@ jobs:
                 issue_number: issueNumber,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: 'URL: ' + process.env.NETLIFY_PREVIEW_URL
+                body: 'Deployed to URL: ' + process.env.NETLIFY_DEPLOY_URL
               })
-            }else{
+            } else{
               console.log('No PR found for commit ' + context.sha)
               }
             }
+
             comment()
