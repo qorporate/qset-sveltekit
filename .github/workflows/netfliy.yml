@@ -45,7 +45,7 @@ jobs:
       - name: Generate URL Preview
         id: url_preview
         run: |
-          cat deploy_output.json >> $"GITHUB_OUTPUT"
+          cat deploy_output.json
         #   NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' deploy_output.json)
         #   echo $NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
         #   echo "NETLIFY_WEBSITE_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
