@@ -1,13 +1,9 @@
-name: Deploy to Netlify
-
-# This workflow runs when a PR to dev is closed & merged
-# Or when manually triggered.
+name: Netlify Deployments
 
 on:
   workflow_dispatch:
   pull_request:
-    types:
-      - closed
+    types: [opened, synchronize, reopened, closed]
     branches:
       - dev
 
@@ -15,7 +11,93 @@ permissions:
   pull-requests: write
 
 jobs:
-  build_and_deploy:
+  # Job for preview deployments (open PRs)
+  deploy_preview:
+    if: github.event.pull_request.merged != true && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.2.0
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build
+        run: |
+          bun run build
+
+      - name: Install Netlify
+        run: npm install netlify-cli@17.10.1 -g
+
+      - name: Deploy to Netlify (Preview)
+        id: netlify_deploy
+        run: |
+          netlify deploy \
+            --dir build \
+            --site ${{ secrets.NETLIFY_SITE_ID }} \
+            --auth ${{ secrets.NETLIFY_API_TOKEN }} \
+            --json \
+            > deploy_output.json
+
+      - name: Get Preview URL
+        id: preview_url
+        run: |
+          NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' deploy_output.json)
+          echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
+
+      - name: Comment Preview URL on PR
+        uses: actions/github-script@v7
+        env:
+          NETLIFY_PREVIEW_URL: ${{ steps.preview_url.outputs.NETLIFY_PREVIEW_URL }}
+        with:
+          script: |
+            async function upsertComment(){
+              const COMMENT_IDENTIFIER = `#PREVIEW_DEPLOY_NOTICE`;
+
+              // Get all comments on the PR
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+              });
+                
+              // Look for our preview comment
+              const previewComment = comments.data.find(comment => 
+                comment.body.includes(COMMENT_IDENTIFIER)
+              );
+                
+              const commentBody = `${COMMENT_IDENTIFIER}\nPreview deployed to URL: ${process.env.NETLIFY_PREVIEW_URL}`;
+                
+              if (previewComment) {
+                // Update existing comment
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: previewComment.id,
+                  body: commentBody
+                });
+                console.log("Updated existing preview comment");
+              } else {
+                // Create new comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: commentBody
+                });
+                console.log("Created new preview comment");
+              }
+            }
+
+            upsertComment();
+
+  # Job for production deployments (merged PRs)
+  deploy_production:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -30,14 +112,14 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: build
+      - name: Build
         run: |
           bun run build
 
       - name: Install Netlify
         run: npm install netlify-cli@17.10.1 -g
 
-      - name: Deploy to Netlify
+      - name: Deploy to Netlify (Production)
         id: netlify_deploy
         run: |
           netlify deploy \
@@ -49,54 +131,50 @@ jobs:
             > deploy_output.json
 
       - name: Get Deploy URL
-        # only needs to run if this was a merged PR
-        if: github.event_name == 'pull_request'
         id: deploy_url
         run: |
           NETLIFY_DEPLOY_URL=$(jq -r '.url' deploy_output.json)
           echo "NETLIFY_DEPLOY_URL=$NETLIFY_DEPLOY_URL" >> "$GITHUB_OUTPUT"
 
-      - name: Comment URL on PR
-        # only needs to run if this was a merged PR
-        if: github.event_name == 'pull_request'
+      - name: Comment Production URL on PR
         uses: actions/github-script@v7
         env:
           NETLIFY_DEPLOY_URL: ${{ steps.deploy_url.outputs.NETLIFY_DEPLOY_URL }}
         with:
           script: |
             async function upsertComment() {
-            	const COMMENT_IDENTIFIER = `#DEPLOY_NOTICE`;
+              const COMMENT_IDENTIFIER = `#DEPLOY_NOTICE`;
                     
-            	// Get all comments on the PR
-            	const comments = await github.rest.issues.listComments({
-            		owner: context.repo.owner,
-            		repo: context.repo.repo,
-            		issue_number: context.issue.number
-            	});
+              // Get all comments on the PR
+              const comments = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number
+              });
                     
-            	// Look for our comment
-            	const comment = comments.data.find((comment) => comment.body.includes(COMMENT_IDENTIFIER));
-            	const commentBody = `${COMMENT_IDENTIFIER}\'Deployed to URL: ${process.env.NETLIFY_DEPLOY_URL}`;
+              // Look for our comment
+              const comment = comments.data.find((comment) => comment.body.includes(COMMENT_IDENTIFIER));
+              const commentBody = `${COMMENT_IDENTIFIER}\nDeployed to URL: ${process.env.NETLIFY_DEPLOY_URL}`;
                     
-            	if (comment) {
-            		// Update existing comment
-            		await github.rest.issues.updateComment({
-            			owner: context.repo.owner,
-            			repo: context.repo.repo,
-            			comment_id: comment.id,
-            			body: commentBody
-            		});
-            		console.log('Updated existing comment');
-            	} else {
-            		// Create new comment
-            		await github.rest.issues.createComment({
-            			owner: context.repo.owner,
-            			repo: context.repo.repo,
-            			issue_number: context.issue.number,
-            			body: commentBody
-            		});
-            		console.log('Created new comment');
-            	}
+              if (comment) {
+                // Update existing comment
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id,
+                  body: commentBody
+                });
+                console.log('Updated existing comment');
+              } else {
+                // Create new comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: commentBody
+                });
+                console.log('Created new comment');
+              }
             }
 
             upsertComment();
