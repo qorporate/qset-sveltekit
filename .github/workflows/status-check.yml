@@ -1,4 +1,4 @@
-name: Check if code builds
+name: Build and Check Code
 
 # todo: add testing
 
@@ -21,6 +21,6 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: build
+      - name: run check
         run: |
           bun run check
