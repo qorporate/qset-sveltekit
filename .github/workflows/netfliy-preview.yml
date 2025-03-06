@@ -60,13 +60,41 @@ jobs:
           NETLIFY_PREVIEW_URL: ${{ steps.preview_url.outputs.NETLIFY_PREVIEW_URL }}
         with:
           script: |
-            async function comment(){
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
+            async function upsertComment(){
+            const COMMENT_IDENTIFIER = `#${Date.now()}`;
+
+            // Get all comments on the PR
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+              
+            // Look for our preview comment
+            const previewComment = comments.data.find(comment => 
+              comment.body.includes(COMMENT_IDENTIFIER)
+            );
+              
+            const commentBody = `${COMMENT_IDENTIFIER}\nPreview deployed to URL: ${process.env.NETLIFY_PREVIEW_URL}`;
+              
+            if (previewComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: 'Preview deployed to URL: ' + process.env.NETLIFY_PREVIEW_URL
-                });
-              }
+                comment_id: previewComment.id,
+                body: commentBody
+              });
+              console.log("Updated existing preview comment");
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+              console.log("Created new preview comment");
+            }
 
-            comment();
+            upsertComment();
