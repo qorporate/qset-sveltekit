@@ -48,11 +48,9 @@ export function deepCopyTeam(team: Team | null): Team | null {
 	};
 }
 
-/// todo: perhaps specify how many characters we wish to start truncating at
-/// as an optional parameter?
-export function truncate(name: string): string {
-	if (name.length > 5) {
-		return name.slice(0, 5) + '...';
+export function truncate(name: string, charLimit: number = 5): string {
+	if (name.length > charLimit) {
+		return name.slice(0, charLimit) + '...';
 	}
 
 	return name;
