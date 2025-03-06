@@ -62,6 +62,11 @@ jobs:
               commit_sha: context.sha,
             })
 
+            if (!result.data) {
+              console.error("No data found.")
+              return;
+            }
+
             console.log(result);
 
             const issueNumber = result.data[0].number
