@@ -4,6 +4,9 @@ on:
   push:
     branches: 'dev'
 
+permissions:
+  pull-requests: write
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -34,6 +37,14 @@ jobs:
           netlify deploy \
             --dir build \
             --site ${{ secrets.NETLIFY_SITE_ID }} \
-            --auth ${{ secrets.NETLIFY_API_TOKEN }}
+            --auth ${{ secrets.NETLIFY_API_TOKEN }} \
+            --prod \
+            --json \
+            > deploy_output.json
 
-            
+      - name: Generate URL Preview
+        id: url_preview
+        run: |
+          NETLIFY_PREVIEW_URL=$(jq -r '.deploy_url' deploy_output.json)
+          echo deploy_output.json >> "$GITHUB_OUTPUT"
+        #   echo "NETLIFY_WEBSITE_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
