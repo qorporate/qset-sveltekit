@@ -61,7 +61,7 @@ jobs:
         with:
           script: |
             async function upsertComment(){
-              const COMMENT_IDENTIFIER = `#${Date.now()}`;
+              const COMMENT_IDENTIFIER = `#PREVIEW_DEPLOY_NOTICE`;
 
               // Get all comments on the PR
               const comments = await github.rest.issues.listComments({
