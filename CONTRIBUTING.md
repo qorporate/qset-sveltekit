@@ -57,7 +57,30 @@ Welcome to our project! Here’s how our Git workflow works. Follow these steps 
 
 ---
 
-## **7. Keep Your Branch Updated**
+## **7. Update Dev From Master**
+
+- After merging changes to `master`, it's essential to sync those changes back to `dev`:
+
+```bash
+   git checkout master
+   git pull origin master
+   git checkout dev
+   git merge master
+   git push origin dev
+```
+
+- If conflicts occur, resolve them carefully, commit, and push:
+
+```bash
+   # After resolving conflicts
+   git add .
+   git commit -m "Merge master into dev to sync branches"
+   git push origin dev
+```
+
+- This workflow ensures that your `dev` branch always contains all the changes that are in `master`, plus any new development work, maintaining a clean forward path for future releases.
+
+## **8. Keep Your Branch Updated**
 
 - Regularly pull the latest changes from `dev` to keep your branch up to date:
 
