@@ -1,6 +1,6 @@
 # CONTRIBUTING
 
-Welcome to our project! Here’s how our Git workflow works. Follow these steps to contribute effectively:
+ Here’s how our Git workflow works:
 
 ---
 
