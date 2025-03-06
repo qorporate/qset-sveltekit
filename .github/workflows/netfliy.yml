@@ -64,29 +64,39 @@ jobs:
           NETLIFY_DEPLOY_URL: ${{ steps.deploy_url.outputs.NETLIFY_DEPLOY_URL }}
         with:
           script: |
-            async function comment(){
-            const result = await github.rest.repos.listPullRequestsAssociatedWithCommit({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-            })
-
-            if (!result.data) {
-              console.error("No PRs found.")
-              return;
+            async function upsertComment() {
+            	const COMMENT_IDENTIFIER = `#${Date.now()}`;
+                    
+            	// Get all comments on the PR
+            	const comments = await github.rest.issues.listComments({
+            		owner: context.repo.owner,
+            		repo: context.repo.repo,
+            		issue_number: context.issue.number
+            	});
+                    
+            	// Look for our comment
+            	const comment = comments.data.find((comment) => comment.body.includes(COMMENT_IDENTIFIER));
+            	const commentBody = `${COMMENT_IDENTIFIER}\'Deployed to URL: ${process.env.NETLIFY_DEPLOY_URL}`;
+                    
+            	if (comment) {
+            		// Update existing comment
+            		await github.rest.issues.updateComment({
+            			owner: context.repo.owner,
+            			repo: context.repo.repo,
+            			comment_id: comment.id,
+            			body: commentBody
+            		});
+            		console.log('Updated existing comment');
+            	} else {
+            		// Create new comment
+            		await github.rest.issues.createComment({
+            			owner: context.repo.owner,
+            			repo: context.repo.repo,
+            			issue_number: context.issue.number,
+            			body: commentBody
+            		});
+            		console.log('Created new comment');
+            	}
             }
 
-            const issueNumber = result.data[0].number
-            if(issueNumber){
-              await github.rest.issues.createComment({
-                issue_number: issueNumber,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: 'Deployed to URL: ' + process.env.NETLIFY_DEPLOY_URL
-              })
-            } else{
-              console.log('No PR found for commit ' + context.sha)
-              }
-            }
-
-            comment()
+            upsertComment();
