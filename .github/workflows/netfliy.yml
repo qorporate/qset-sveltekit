@@ -61,7 +61,7 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         env:
-          NETLIFY_DEPLOY_URL: ${{ steps.url_preview.outputs.NETLIFY_DEPLOY_URL }}
+          NETLIFY_DEPLOY_URL: ${{ steps.deploy_url.outputs.NETLIFY_DEPLOY_URL }}
         with:
           script: |
             async function comment(){
