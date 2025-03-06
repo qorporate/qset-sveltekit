@@ -50,6 +50,7 @@ jobs:
         if: github.event_name == 'pull_request'
         id: deploy_url
         run: |
+          cat deploy_output.json
           NETLIFY_PREVIEW_URL=$(jq -r '.url' deploy_output.json)
           echo "NETLIFY_PREVIEW_URL=$NETLIFY_PREVIEW_URL" >> "$GITHUB_OUTPUT"
 
@@ -67,6 +68,8 @@ jobs:
               repo: context.repo.repo,
               commit_sha: context.sha,
             })
+
+            console.log(result);
 
             if (!result.data) {
               console.error("No PRs found.")
