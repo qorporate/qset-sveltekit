@@ -1,13 +1,118 @@
 # CONTRIBUTING
 
-Here's how our git workflow works:
+Welcome to our project! Here’s how our Git workflow works. Follow these steps to contribute effectively:
 
-1. **Start with Dev**: Always create new branches from dev branch, which has the latest working code.
-2. **Create Feature Branches**: When working on something new, create a branch with a descriptive name and prefix like `feature/your-feature-name`, or `fix/**` or `hotfix/**`.
-3. **Commit Often**: Make small, focused commits with clear messages.
-4. **Open a PR to Dev**: When your feature is ready, open a PR to the dev branch.
-   Our system will create a Netlify preview deployment so we can see your changes live.
-5. **Testing in Dev**: After merging to dev, you can test the new features on our Netlify site.
-6. **Release to Production**: When we're ready to release, we create a PR from dev to master.
-   This deploys to our production GitHub Pages site.
-7. **Keep Updated**: Regularly pull from dev to get the latest changes.
+---
+
+## **1. Start with the `dev` Branch**
+
+- The `dev` branch is the default branch and contains the latest working code.
+- **Always create new branches from `dev`** to ensure you’re building on the most up-to-date codebase.
+
+---
+
+## **2. Create a Feature Branch**
+
+- When working on a new feature, bug fix, or hotfix, create a new branch with a descriptive name:
+  - Use the prefix `feature/` for new features (e.g., `feature/user-login`).
+  - Use the prefix `fix/` for bug fixes (e.g., `fix/button-styling`).
+  - Use the prefix `hotfix/` for urgent fixes to production (e.g., `hotfix/critical-bug`).
+- Keep branch names short and meaningful.
+
+---
+
+## **3. Commit Often and Clearly**
+
+- Make small, focused commits that address a single change or task.
+- Write clear commit messages in the present tense (e.g., "Add user login form" instead of "Added user login form").
+- Avoid committing broken or untested code to your branch.
+
+---
+
+## **4. Open a Pull Request (PR) to `dev`**
+
+- When your feature or fix is ready, open a PR to the `dev` branch.
+- Provide a clear description of your changes in the PR:
+  - What does this PR do?
+  - How can it be tested?
+  - Include screenshots or links if applicable.
+- **Netlify Preview Deployment**: When you open a PR, a preview deployment will be automatically created. Use the provided URL to test your changes in a live environment.
+
+---
+
+## **5. Testing in `dev`**
+
+- After your PR is merged into `dev`, your changes will be deployed to the main Netlify site for further testing.
+- Test your changes thoroughly to ensure they work as expected.
+
+---
+
+## **6. Release to Production**
+
+- When we’re ready to release new features or fixes to production:
+  1. Create a PR from `dev` to `master`.
+  2. Review the changes carefully.
+  3. Merge the PR into `master`.
+- **Production Deployment**: Once merged, the `master` branch will automatically deploy to GitHub Pages (our production site).
+
+---
+
+## **7. Keep Your Branch Updated**
+
+- Regularly pull the latest changes from `dev` to keep your branch up to date:
+
+```bash
+  git checkout dev
+  git pull origin dev
+  git checkout your-branch
+  git merge dev
+```
+
+- Resolve any merge conflicts that arise.
+
+---
+
+## **Best Practices**
+
+- **Protect Branches**: Both `master` and `dev` are protected. Always use PRs to merge changes—no direct commits.
+- **Code Reviews**: Review each other’s PRs to ensure code quality and share knowledge.
+- **Test Locally**: Before opening a PR, test your changes locally to avoid breaking the build.
+- **Communicate**: If you’re unsure about anything, ask for help or clarification.
+
+---
+
+## **Workflow Summary**
+
+1. Branch from `dev`.
+2. Work on your feature/fix in a new branch.
+3. Open a PR to `dev` for review and testing.
+4. Merge to `dev` and test on Netlify.
+5. When ready, create a PR from `dev` to `master` for production deployment to GitHub Pages.
+
+---
+
+### **Example Workflow**
+
+1. Create a new branch:
+
+   ```bash
+   git checkout dev
+   git pull origin dev
+   git checkout -b feature/user-login
+   ```
+
+2. Make changes and commit:
+
+   ```bash
+   git add .
+   git commit -m "Add user login form"
+   ```
+
+3. Push your branch and open a PR:
+
+   ```bash
+   git push origin feature/user-login
+   ```
+
+4. After PR approval and merging, test on Netlify.
+5. When ready, create a PR from `dev` to `master` for production.
