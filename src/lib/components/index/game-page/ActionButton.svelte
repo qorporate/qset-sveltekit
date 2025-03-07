@@ -26,7 +26,6 @@
 		color: white;
 		padding: 5px 10px;
 		font-size: 14px;
-		width: 34px;
 		height: 34px;
 	}
 </style>

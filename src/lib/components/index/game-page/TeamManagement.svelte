@@ -24,6 +24,7 @@
 	<h2>Add Teams</h2>
 	<form class="team-input" onsubmit={handleSubmit}>
 		<input type="text" bind:value={newTeamName} placeholder="Enter team name" />
+
 		<ActionButton
 			color="#4caf50"
 			icon="fa-plus"
@@ -53,6 +54,12 @@
 		input[type='text'] {
 			/* prevent accessibility zoom in on phones */
 			font-size: 16px;
+		}
+	}
+
+	@media (max-width: 320px) {
+		.team-input {
+			flex-direction: column;
 		}
 	}
 </style>

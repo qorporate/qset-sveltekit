@@ -1,8 +1,8 @@
 <script>
 	import { GuidePageSection } from '$lib/common/enums';
-	import GuideNav from '$lib/components/guide-page/GuideNav.svelte';
-	import StepByStep from '$lib/components/guide-page/StepByStep.svelte';
-	import VideoGuide from '$lib/components/guide-page/VideoGuide.svelte';
+	import GuideNav from '$lib/components/guide/GuideNav.svelte';
+	import StepByStep from '$lib/components/guide/StepByStep.svelte';
+	import VideoGuide from '$lib/components/guide/VideoGuide.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 
 	const SITE_URL = 'https://qset.qballxi.com/guide';
