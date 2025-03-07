@@ -22,7 +22,7 @@
 		return teams;
 	}
 
-	// Sort teams by points (descending), then by wins (descending)
+	// Sort teams by points (descending), then by the streak (descending)
 	let sortedTeams = $derived(
 		getAllTeams().sort((a, b) => {
 			const pointsA = calculatePoints(a.wins, a.draws);
