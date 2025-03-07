@@ -93,7 +93,6 @@
 	class="page-wrapper"
 >
 	<Nav page="home" />
-
 	<PageNavigation {currentPage} {totalPages} {goToPage} {goToNextPage} {goToPreviousPage} />
 
 	<Page isActive={currentPage === 0}>
