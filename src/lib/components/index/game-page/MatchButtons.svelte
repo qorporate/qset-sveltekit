@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { MatchResult } from '$lib/common/enums';
+	import { truncate } from '$lib/common/util';
 	import { game, Team } from '$lib/main/game.svelte';
 	import { timerManager } from '$lib/main/time.svelte';
 
@@ -19,7 +20,7 @@
 
 <div class="buttons">
 	<button class="win left" onclick={() => handleResult(MatchResult.Team1)}>
-		<span id="left-team-name">{teamA.name} Wins</span>
+		<span id="left-team-name">{truncate(teamA.name)} Wins</span>
 	</button>
 	<button
 		class="draw"
@@ -30,7 +31,7 @@
 		Draw
 	</button>
 	<button class="win right" onclick={() => handleResult(MatchResult.Team2)}>
-		<span id="right-team-name">{teamB.name} Wins</span>
+		<span id="right-team-name">{truncate(teamB.name)} Wins</span>
 	</button>
 </div>
 

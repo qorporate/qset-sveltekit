@@ -35,10 +35,6 @@ export function editTeamName(game: Game, oldTeamName: string): void {
 	);
 }
 
-export function formatTeamStats(team: Team): string {
-	return `${team.wins}W | ${team.draws}D | ${team.losses}L`;
-}
-
 export function deepCopyTeam(team: Team | null): Team | null {
 	if (!team) {
 		return null;
@@ -50,4 +46,12 @@ export function deepCopyTeam(team: Team | null): Team | null {
 		draws: team.draws,
 		currentStreak: team.currentStreak
 	};
+}
+
+export function truncate(name: string, charLimit: number = 5): string {
+	if (name.length > charLimit) {
+		return name.slice(0, charLimit) + '...';
+	}
+
+	return name;
 }

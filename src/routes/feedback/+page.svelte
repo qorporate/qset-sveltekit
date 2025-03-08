@@ -1,5 +1,5 @@
 <script>
-	import FeedbackForm from '$lib/components/feedback-page/FeedbackForm.svelte';
+	import FeedbackForm from '$lib/components/feedback/FeedbackForm.svelte';
 	import Nav from '$lib/components/Nav.svelte';
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 
